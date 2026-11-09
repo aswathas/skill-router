@@ -1,0 +1,17 @@
+# Extracted from a live config. Credentials and unrelated sections removed.
+# Merge these blocks into your own ~/.minimax/config.yaml.
+  skillProposal: true
+
+skills:
+  external:
+    enabled: false
+
+  enabled: true
+  signalCooldownHours: 24
+  minConfidence: 0.7
+  proposal:
+    enabled: true
+    minMessageCount: 40
+  lifecycle:
+    staleThresholdDays: 15
+    archiveThresholdDays: 30
