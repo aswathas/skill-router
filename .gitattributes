@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.bat crlf eol=crlf
+*.cmd crlf eol=crlf
+*.png binary
+*.pdf binary
