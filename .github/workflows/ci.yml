@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Tests (Python ${{ matrix.python }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Run the test suite
+        run: python -m unittest discover -s tests -v
+
+  artefacts:
+    name: Artefacts are reproducible
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Rebuild the paper source and the arXiv metadata
+        run: |
+          python paper/build.py
+          python arxiv/make-metadata.py
+      - name: Fail if the committed artefacts differ from the rebuild
+        run: |
+          git diff --exit-code -- paper/skill-router.tex arxiv/metadata.yaml
+      - name: The tarball must contain the paper source
+        run: |
+          python arxiv/make-eprint.py
+          tar tzf arxiv/skill-router-eprint.tar.gz
