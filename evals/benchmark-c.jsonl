@@ -1,0 +1,51 @@
+{"id": "S001", "request": "look into whether this startup idea has any real market", "cap": "research", "skill": "research", "source": "authored"}
+{"id": "S002", "request": "gather what we know about lithium supply chains before i commit", "cap": "research", "skill": "research", "source": "authored"}
+{"id": "S003", "request": "this function returns null sometimes and i cannot see why", "cap": "debugging", "skill": "diagnosing-bugs", "source": "authored"}
+{"id": "S004", "request": "read through my branch and tell me what is wrong with it", "cap": "code-review", "skill": "code-review", "source": "authored"}
+{"id": "S005", "request": "convert these csv files into json", "cap": "data", "skill": "aswath-csvjson", "source": "authored"}
+{"id": "S006", "request": "talk to me in the caveman voice", "cap": "response-style", "skill": "caveman", "source": "authored"}
+{"id": "S007", "request": "generate a changelog from the commits since last release", "cap": "docs-authoring", "skill": "changelog-generator", "source": "authored"}
+{"id": "S008", "request": "audit our claude.md file, it has grown fat", "cap": "docs-authoring", "skill": "claude-md-improver", "source": "authored"}
+{"id": "S009", "request": "write a handover note for whoever picks this up next week", "cap": "docs-authoring", "skill": "handoff-doc", "source": "authored"}
+{"id": "S010", "request": "find the failing checks on this pr and fix them", "cap": "ci-delivery", "skill": "fix-ci", "source": "authored"}
+{"id": "S011", "request": "resolve the conflicts on my branch and validate the build", "cap": "ci-delivery", "skill": "fix-merge-conflicts", "source": "authored"}
+{"id": "S012", "request": "keep watching the pr checks until they are green", "cap": "ci-delivery", "skill": "loop-on-ci", "source": "authored"}
+{"id": "S013", "request": "how many tokens did this session burn", "cap": "cost-tokens", "skill": "aswath-token-evaluator", "source": "authored"}
+{"id": "S014", "request": "keep an eye on the context usage so it does not overflow", "cap": "cost-tokens", "skill": "aswath-token-guard", "source": "authored"}
+{"id": "S015", "request": "design the context budget for this long conversation", "cap": "cost-tokens", "skill": "context-window-design", "source": "authored"}
+{"id": "S016", "request": "audit how the harness runs long shell commands", "cap": "harness-audit", "skill": "long-command-check", "source": "authored"}
+{"id": "S017", "request": "check how this agent handles a long session", "cap": "harness-audit", "skill": "long-session-check", "source": "authored"}
+{"id": "S018", "request": "turn these notes into an obsidian vault", "cap": "knowledge-management", "skill": "obsidian-markdown", "source": "authored"}
+{"id": "S019", "request": "build a knowledge graph of the codebase", "cap": "knowledge-management", "skill": "graphify", "source": "authored"}
+{"id": "S020", "request": "install the skill for this from the marketplace", "cap": "marketplace", "skill": "find-skills", "source": "authored"}
+{"id": "S021", "request": "build an mcp server exposing our search tool", "cap": "mcp-builder", "skill": "build-mcp-server", "source": "authored"}
+{"id": "S022", "request": "learn how mcp servers work before i write one", "cap": "mcp-builder", "skill": "learn-mcp", "source": "authored"}
+{"id": "S023", "request": "remember that this project uses pnpm", "cap": "memory", "skill": "recall", "source": "authored"}
+{"id": "S024", "request": "add tracing to the python service", "cap": "observability", "skill": "observability-edot-python-instrument", "source": "authored"}
+{"id": "S025", "request": "fan out three agents to solve this in parallel", "cap": "orchestration", "skill": "swarm", "source": "authored"}
+{"id": "S026", "request": "turn this goal into a phased plan with milestones", "cap": "planning", "skill": "make-plan", "source": "authored"}
+{"id": "S027", "request": "break this work down into tasks with dependencies", "cap": "planning", "skill": "planning-and-task-breakdown", "source": "authored"}
+{"id": "S028", "request": "make the site faster, the pages load slowly", "cap": "performance", "skill": "web-perf", "source": "authored"}
+{"id": "S029", "request": "clean up the duplicated logic across these three files", "cap": "refactoring", "skill": "deslop", "source": "authored"}
+{"id": "S030", "request": "this module is overbuilt, strip it back", "cap": "refactoring", "skill": "principle-laziness-protocol", "source": "authored"}
+{"id": "S031", "request": "i need a failing test first, then the fix", "cap": "testing", "skill": "test-driven-development", "source": "authored"}
+{"id": "S032", "request": "write a test that pins down this behaviour", "cap": "testing", "skill": "tdd", "source": "authored"}
+{"id": "S033", "request": "make an image out of this html", "cap": "image-generation", "skill": "html-to-image-automation", "source": "authored"}
+{"id": "S034", "request": "enhance and upscale the picture i made", "cap": "image-generation", "skill": "image-enhancer", "source": "authored"}
+{"id": "S035", "request": "set up the theme so light and dark both work", "cap": "design-system", "skill": "theme-factory", "source": "authored"}
+{"id": "S036", "request": "write the brand guidelines", "cap": "design-system", "skill": "brand-guidelines", "source": "authored"}
+{"id": "S037", "request": "improve the animations on this page", "cap": "design-motion", "skill": "improve-animations", "source": "authored"}
+{"id": "S038", "request": "draw an architecture diagram of the service", "cap": "diagrams", "skill": "blueprint-figure", "source": "authored"}
+{"id": "S039", "request": "build a cli so agents can drive this reliably", "cap": "cli-tooling", "skill": "cli-for-agents", "source": "authored"}
+{"id": "S040", "request": "find where the auth token is handled across the codebase", "cap": "code-search", "skill": "smart-explore", "source": "authored"}
+{"id": "S041", "request": "upload the report to drive", "cap": "integrations-drive", "skill": "googledrive-automation", "source": "authored"}
+{"id": "S042", "request": "put this data in a google sheet", "cap": "integrations-sheets", "skill": "google-sheets", "source": "authored"}
+{"id": "S043", "request": "book a meeting slot with the team", "cap": "integrations-calendar", "skill": "googlecalendar-automation", "source": "authored"}
+{"id": "S044", "request": "add a task to my todo list", "cap": "integrations-tasks", "skill": "googletasks-automation", "source": "authored"}
+{"id": "S045", "request": "open the shared doc and summarise it", "cap": "integrations-docs", "skill": "googledocs-automation", "source": "authored"}
+{"id": "S046", "request": "solve this hard maths problem in rounds with a judge", "cap": "problem-solving", "skill": "siege", "source": "authored"}
+{"id": "S047", "request": "work through this proof yourself, step by step", "cap": "problem-solving", "skill": "solo", "source": "authored"}
+{"id": "S048", "request": "write an interactive wizard that walks a human through setup", "cap": "infra-provisioning", "skill": "wizard", "source": "authored"}
+{"id": "S049", "request": "ship this to production", "cap": "deployment", "skill": "release", "source": "authored"}
+{"id": "S050", "request": "write the commit message for these changes", "cap": "version-control", "skill": "git-workflow-and-versioning", "source": "authored"}
+{"id": "S051", "request": "write a new skill for this workflow", "cap": "skill-authoring", "skill": "skill-creator", "source": "authored"}

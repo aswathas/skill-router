@@ -1,0 +1,182 @@
+{"id": "B001", "request": "build the marketing landing page for the new product", "cap": "ui-implementation", "source": "authored"}
+{"id": "B002", "request": "make the dashboard screen for the analytics module", "cap": "ui-implementation", "source": "authored"}
+{"id": "B003", "request": "implement the settings page ui", "cap": "ui-implementation", "source": "authored"}
+{"id": "B004", "request": "create the hero section for the site", "cap": "ui-implementation", "source": "authored"}
+{"id": "B005", "request": "code the portfolio website front page", "cap": "ui-implementation", "source": "authored"}
+{"id": "B006", "request": "build a portfolio site that shows my work", "cap": "ui-implementation", "source": "authored"}
+{"id": "B007", "request": "give this product a distinctive visual identity", "cap": "design-direction", "source": "authored"}
+{"id": "B008", "request": "pick a direction for the artwork so it does not look like every other saas site", "cap": "design-direction", "source": "authored"}
+{"id": "B009", "request": "set the typographic style for the brand", "cap": "design-direction", "source": "authored"}
+{"id": "B010", "request": "define the spacing and colour rules for the whole site", "cap": "design-direction", "source": "authored"}
+{"id": "B011", "request": "open the page in a browser and fix whatever looks broken", "cap": "design-inspect", "source": "authored"}
+{"id": "B012", "request": "take a screenshot and check the visual result", "cap": "design-inspect", "source": "authored"}
+{"id": "B013", "request": "compare this screen against the reference image", "cap": "design-inspect", "source": "authored"}
+{"id": "B014", "request": "build the reusable component library with tokens", "cap": "design-system", "source": "authored"}
+{"id": "B015", "request": "set up the theme so light and dark both work", "cap": "design-system", "source": "authored"}
+{"id": "B016", "request": "create the style guide for the product", "cap": "design-system", "source": "authored"}
+{"id": "B017", "request": "add smooth transitions between the pages", "cap": "design-motion", "source": "authored"}
+{"id": "B018", "request": "make the animations on this component feel right", "cap": "design-motion", "source": "authored"}
+{"id": "B019", "request": "add a kinetic typography effect to the hero", "cap": "design-motion", "source": "authored"}
+{"id": "B020", "request": "rewrite the marketing copy so it is not generic", "cap": "design-copy", "source": "authored"}
+{"id": "B021", "request": "fix the wording on the landing page", "cap": "design-copy", "source": "authored"}
+{"id": "B022", "request": "make sure this page works for keyboard only users", "cap": "design-accessibility", "source": "authored"}
+{"id": "B023", "request": "check the colour contrast of the buttons", "cap": "design-accessibility", "source": "authored"}
+{"id": "B024", "request": "add aria labels so screen readers make sense of it", "cap": "design-accessibility", "source": "authored"}
+{"id": "B025", "request": "make me a picture of a robot watering plants", "cap": "image-generation", "source": "authored"}
+{"id": "B026", "request": "create a poster for the hackathon", "cap": "image-generation", "source": "authored"}
+{"id": "B027", "request": "generate artwork for the album cover", "cap": "image-generation", "source": "authored"}
+{"id": "B028", "request": "turn this text into an illustration for the blog", "cap": "image-generation", "source": "authored"}
+{"id": "B029", "request": "produce a short clip for the launch", "cap": "video-audio", "source": "authored"}
+{"id": "B030", "request": "record narration for the tutorial", "cap": "video-audio", "source": "authored"}
+{"id": "B031", "request": "extract the audio from this mp4", "cap": "video-audio", "source": "authored"}
+{"id": "B032", "request": "draw an architecture diagram of the service", "cap": "diagrams", "source": "authored"}
+{"id": "B033", "request": "make a sequence diagram for the auth flow", "cap": "diagrams", "source": "authored"}
+{"id": "B034", "request": "sketch a flowchart of the approval steps", "cap": "diagrams", "source": "authored"}
+{"id": "B035", "request": "load this csv into the warehouse", "cap": "data", "source": "authored"}
+{"id": "B036", "request": "clean the messy rows before analysis", "cap": "data", "source": "authored"}
+{"id": "B037", "request": "the spreadsheet numbers do not add up, find the bad rows", "cap": "data", "source": "authored"}
+{"id": "B038", "request": "convert these csv files into json", "cap": "data", "source": "authored", "skill": "aswath-csvjson"}
+{"id": "B039", "request": "profile the dataset and tell me what is in it", "cap": "data", "source": "authored"}
+{"id": "B040", "request": "why is this postgres query so slow", "cap": "database", "source": "authored"}
+{"id": "B041", "request": "design the tables for the orders system", "cap": "database", "source": "authored"}
+{"id": "B042", "request": "add an index to speed up this lookup", "cap": "database", "source": "authored"}
+{"id": "B043", "request": "migrate the schema without losing data", "cap": "database", "source": "authored"}
+{"id": "B044", "request": "write a client for their rest api", "cap": "api", "source": "authored"}
+{"id": "B045", "request": "design the endpoints for the public api", "cap": "api", "source": "authored"}
+{"id": "B046", "request": "handle the webhook they send on payment", "cap": "api", "source": "authored"}
+{"id": "B047", "request": "write an openapi spec for the service", "cap": "api", "source": "authored"}
+{"id": "B048", "request": "wrap the graphql endpoint in a typed client", "cap": "api", "source": "authored"}
+{"id": "B049", "request": "add passwordless login to the app", "cap": "auth", "source": "authored"}
+{"id": "B050", "request": "the session expires too early, fix the token handling", "cap": "auth", "source": "authored"}
+{"id": "B051", "request": "implement jwt refresh", "cap": "auth", "source": "authored"}
+{"id": "B052", "request": "add sso so staff can use the company account", "cap": "auth", "source": "authored"}
+{"id": "B053", "request": "triage these siem alerts and open cases for the real ones", "cap": "security-ops", "source": "authored"}
+{"id": "B054", "request": "write a detection rule for suspicious logins", "cap": "security-ops", "source": "authored"}
+{"id": "B055", "request": "manage who can access the production console", "cap": "security-ops", "source": "authored"}
+{"id": "B056", "request": "review the vulnerabilities the scanner found", "cap": "security-ops", "source": "authored"}
+{"id": "B057", "request": "move this app onto cloudflare workers", "cap": "cloud-ops", "source": "authored"}
+{"id": "B058", "request": "set up network filters on the serverless project", "cap": "cloud-ops", "source": "authored"}
+{"id": "B059", "request": "provision the sandbox environment for the team", "cap": "cloud-ops", "source": "authored"}
+{"id": "B060", "request": "why is the service slow, check the apm data", "cap": "search-observability", "source": "authored"}
+{"id": "B061", "request": "search the logs for errors after the deploy", "cap": "search-observability", "source": "authored"}
+{"id": "B062", "request": "query the logs with esql to find the slow requests", "cap": "search-observability", "source": "authored"}
+{"id": "B063", "request": "show me the dashboards for service health", "cap": "search-observability", "source": "authored"}
+{"id": "B064", "request": "upgrade the nextjs app to the latest version", "cap": "frontend-web", "source": "authored"}
+{"id": "B065", "request": "add cache components to this page", "cap": "frontend-web", "source": "authored"}
+{"id": "B066", "request": "make a self contained html playground for the demo", "cap": "frontend-web", "source": "authored"}
+{"id": "B067", "request": "build the 21st ui screen for the landing page", "cap": "frontend-web", "source": "authored"}
+{"id": "B068", "request": "improve the meta description and sitemap", "cap": "seo", "source": "authored"}
+{"id": "B069", "request": "fix the crawl errors google reported", "cap": "seo", "source": "authored"}
+{"id": "B070", "request": "add structured data for the products", "cap": "seo", "source": "authored"}
+{"id": "B071", "request": "track the signup funnel and where people drop off", "cap": "analytics", "source": "authored"}
+{"id": "B072", "request": "add event tracking to the checkout button", "cap": "analytics", "source": "authored"}
+{"id": "B073", "request": "build the retention dashboard", "cap": "analytics", "source": "authored"}
+{"id": "B074", "request": "write the newsletter for this month", "cap": "email-marketing", "source": "authored"}
+{"id": "B075", "request": "set up the drip campaign for new subscribers", "cap": "email-marketing", "source": "authored"}
+{"id": "B076", "request": "migrate the blog posts into the headless cms", "cap": "content-cms", "source": "authored"}
+{"id": "B077", "request": "write the article in the content pipeline format", "cap": "content-cms", "source": "authored"}
+{"id": "B078", "request": "set up the contentful space for the marketing site", "cap": "content-cms", "source": "authored"}
+{"id": "B079", "request": "add a shopping cart page to the store", "cap": "ecommerce", "source": "authored"}
+{"id": "B080", "request": "set up the product page with variants", "cap": "ecommerce", "source": "authored"}
+{"id": "B081", "request": "connect the payment provider for checkout", "cap": "ecommerce", "source": "authored"}
+{"id": "B082", "request": "integrate stripe for the subscription plan", "cap": "payments", "source": "authored"}
+{"id": "B083", "request": "add a refund flow to the billing system", "cap": "payments", "source": "authored"}
+{"id": "B084", "request": "handle the payment approval rules for the agent", "cap": "payments", "source": "authored"}
+{"id": "B085", "request": "build the multi step signup form", "cap": "forms", "source": "authored"}
+{"id": "B086", "request": "validate the input fields before submit", "cap": "forms", "source": "authored"}
+{"id": "B087", "request": "make the contact form send mail", "cap": "forms", "source": "authored"}
+{"id": "B088", "request": "scrape the prices off this page", "cap": "browser", "source": "authored"}
+{"id": "B089", "request": "drive the browser and take the screenshots", "cap": "browser", "source": "authored"}
+{"id": "B090", "request": "open the url and check what it renders", "cap": "browser", "source": "authored"}
+{"id": "B091", "request": "run the headless script that fills the form", "cap": "browser", "source": "authored"}
+{"id": "B092", "request": "build an mcp server exposing our search tool", "cap": "mcp-builder", "source": "authored"}
+{"id": "B093", "request": "write a fastmcp server for the database", "cap": "mcp-builder", "source": "authored"}
+{"id": "B094", "request": "expose this api as an mcp tool", "cap": "mcp-builder", "source": "authored"}
+{"id": "B095", "request": "write a new skill for this workflow", "cap": "skill-authoring", "source": "authored", "skill": "find-skills"}
+{"id": "B096", "request": "create a skill template with the right frontmatter", "cap": "skill-authoring", "source": "authored"}
+{"id": "B097", "request": "turn this runbook into a reusable skill", "cap": "skill-authoring", "source": "authored"}
+{"id": "B098", "request": "two workers are writing the same file, fix the race", "cap": "concurrency", "source": "authored"}
+{"id": "B099", "request": "make this safe to retry if it fails halfway", "cap": "concurrency", "source": "authored"}
+{"id": "B100", "request": "add a worker queue so we do not hammer the api", "cap": "concurrency", "source": "authored"}
+{"id": "B101", "request": "add tracing so we can see where the time goes", "cap": "observability", "source": "authored"}
+{"id": "B102", "request": "instrument the service with metrics", "cap": "observability", "source": "authored"}
+{"id": "B103", "request": "set up alerts for the error rate", "cap": "observability", "source": "authored"}
+{"id": "B104", "request": "ship this to production", "cap": "deployment", "source": "authored"}
+{"id": "B105", "request": "release version 2.0 with the changelog", "cap": "deployment", "source": "authored"}
+{"id": "B106", "request": "set up the ci pipeline to publish on merge", "cap": "deployment", "source": "authored"}
+{"id": "B107", "request": "make the vercel preview deploy work for every pr", "cap": "deployment", "source": "authored"}
+{"id": "B108", "request": "write the commit message for these changes", "cap": "version-control", "source": "authored"}
+{"id": "B109", "request": "rebase my branch onto main", "cap": "version-control", "source": "authored"}
+{"id": "B110", "request": "set up pre-commit hooks", "cap": "version-control", "source": "authored"}
+{"id": "B111", "request": "move this work to a separate branch with worktrees", "cap": "version-control", "source": "authored"}
+{"id": "B112", "request": "fan out three agents to solve this in parallel", "cap": "orchestration", "source": "authored"}
+{"id": "B113", "request": "have a subagent do the research while i plan", "cap": "orchestration", "source": "authored"}
+{"id": "B114", "request": "coordinate the work across three services", "cap": "orchestration", "source": "authored"}
+{"id": "B115", "request": "spawn a background session to keep working", "cap": "orchestration", "source": "authored"}
+{"id": "B116", "request": "remember that this project uses pnpm", "cap": "memory", "source": "authored"}
+{"id": "B117", "request": "search what we decided about the caching layer last time", "cap": "memory", "source": "authored"}
+{"id": "B118", "request": "capture the observation from this session into memory", "cap": "memory", "source": "authored"}
+{"id": "B119", "request": "the chat keeps eating my context budget, trim it", "cap": "cost-tokens", "source": "authored"}
+{"id": "B120", "request": "how many tokens did this session burn", "cap": "cost-tokens", "source": "authored"}
+{"id": "B121", "request": "compact the context before the long task", "cap": "cost-tokens", "source": "authored"}
+{"id": "B122", "request": "what is the token spend on this account", "cap": "cost-tokens", "source": "authored"}
+{"id": "B123", "request": "audit everything the agent injects into each request", "cap": "cost-tokens", "source": "authored"}
+{"id": "B124", "request": "before we start, interview me about what i actually want", "cap": "agent-process", "source": "authored"}
+{"id": "B125", "request": "break this plan into tracer bullet tickets", "cap": "agent-process", "source": "authored"}
+{"id": "B126", "request": "grill me on this design until it holds up", "cap": "agent-process", "source": "authored"}
+{"id": "B127", "request": "run several candidates in parallel and graft the best parts", "cap": "agent-process", "source": "authored"}
+{"id": "B128", "request": "sharpen this task before we start", "cap": "agent-process", "source": "authored"}
+{"id": "B129", "request": "build a cli so agents can drive this reliably", "cap": "cli-tooling", "source": "authored"}
+{"id": "B130", "request": "design the command line interface for the tool", "cap": "cli-tooling", "source": "authored"}
+{"id": "B131", "request": "make a cf cli wrapper for the workers", "cap": "cli-tooling", "source": "authored"}
+{"id": "B132", "request": "set up a plugin with a hook that runs on every prompt", "cap": "devtooling", "source": "authored"}
+{"id": "B133", "request": "write a slash command for this", "cap": "devtooling", "source": "authored"}
+{"id": "B134", "request": "connect the telegram channel to the bot", "cap": "devtooling", "source": "authored"}
+{"id": "B135", "request": "set up the codex runtime helper", "cap": "devtooling", "source": "authored"}
+{"id": "B136", "request": "audit how the harness runs long shell commands", "cap": "harness-audit", "source": "authored"}
+{"id": "B137", "request": "check how this agent handles a long session", "cap": "harness-audit", "source": "authored"}
+{"id": "B138", "request": "talk to me in the caveman voice", "cap": "response-style", "source": "authored", "skill": "caveman"}
+{"id": "B139", "request": "make the replies terse, no filler", "cap": "response-style", "source": "authored"}
+{"id": "B140", "request": "this endpoint is slow, optimise it", "cap": "performance", "source": "authored"}
+{"id": "B141", "request": "find the bottleneck in the hot path", "cap": "performance", "source": "authored"}
+{"id": "B142", "request": "profile the service and tell me what to speed up", "cap": "performance", "source": "authored"}
+{"id": "B143", "request": "the p99 latency doubled after the upgrade", "cap": "performance", "source": "authored"}
+{"id": "B144", "request": "solve this hard maths problem in rounds with a judge", "cap": "problem-solving", "source": "authored"}
+{"id": "B145", "request": "work through this proof yourself, step by step", "cap": "problem-solving", "source": "authored"}
+{"id": "B146", "request": "find where the auth token is handled across the codebase", "cap": "code-search", "source": "authored"}
+{"id": "B147", "request": "search the code structure instead of reading every file", "cap": "code-search", "source": "authored"}
+{"id": "B148", "request": "write an interactive wizard that walks a human through the setup", "cap": "infra-provisioning", "source": "authored"}
+{"id": "B149", "request": "provision the machine and set the credentials", "cap": "infra-provisioning", "source": "authored"}
+{"id": "B150", "request": "read my gmail inbox for the invoice", "cap": "integrations-gmail", "source": "authored"}
+{"id": "B151", "request": "draft a reply to the thread in gmail", "cap": "integrations-gmail", "source": "authored"}
+{"id": "B152", "request": "what is on my calendar tomorrow", "cap": "integrations-calendar", "source": "authored"}
+{"id": "B153", "request": "book a meeting slot with the team", "cap": "integrations-calendar", "source": "authored"}
+{"id": "B154", "request": "find the file in my drive folder", "cap": "integrations-drive", "source": "authored"}
+{"id": "B155", "request": "upload the report to drive", "cap": "integrations-drive", "source": "authored"}
+{"id": "B156", "request": "put this data in a google sheet", "cap": "integrations-sheets", "source": "authored"}
+{"id": "B157", "request": "read the rows from the sheet", "cap": "integrations-sheets", "source": "authored"}
+{"id": "B158", "request": "add a task to my todo list", "cap": "integrations-tasks", "source": "authored"}
+{"id": "B159", "request": "what is on my task list for today", "cap": "integrations-tasks", "source": "authored"}
+{"id": "B160", "request": "open the shared doc and summarise it", "cap": "integrations-docs", "source": "authored"}
+{"id": "B161", "request": "write the notes into the shared document", "cap": "integrations-docs", "source": "authored"}
+{"id": "B162", "request": "turn these notes into an obsidian vault", "cap": "knowledge-management", "source": "authored"}
+{"id": "B163", "request": "build a knowledge graph of the codebase", "cap": "knowledge-management", "source": "authored"}
+{"id": "B164", "request": "write the wiki links and callouts in the note", "cap": "knowledge-management", "source": "authored"}
+{"id": "B165", "request": "make a spinning teapot in the browser", "cap": "3d-graphics", "source": "authored"}
+{"id": "B166", "request": "write the shaders for this scene", "cap": "3d-graphics", "source": "authored"}
+{"id": "B167", "request": "sort my downloads folder by file type", "cap": "file-management", "source": "authored"}
+{"id": "B168", "request": "collect the receipts from this month for tax", "cap": "file-management", "source": "authored"}
+{"id": "B169", "request": "rewrite my tweet so it gets more reach", "cap": "social-media", "source": "authored"}
+{"id": "B170", "request": "analyse why this post is underperforming", "cap": "social-media", "source": "authored"}
+{"id": "B171", "request": "post an update on linkedin", "cap": "social-linkedin", "source": "authored"}
+{"id": "B172", "request": "what are the typescript best practices i should follow", "cap": "code-quality", "source": "authored"}
+{"id": "B173", "request": "the linter is unhappy about this file", "cap": "code-quality", "source": "authored"}
+{"id": "B174", "request": "find some domain names for this project", "cap": "research-discovery", "source": "authored"}
+{"id": "B175", "request": "analyse my chat history to see my coding habits", "cap": "research-discovery", "source": "authored"}
+{"id": "B176", "request": "read this pdf and pull out the key points", "cap": "documents", "source": "authored"}
+{"id": "B177", "request": "fill in this word document", "cap": "documents", "source": "authored"}
+{"id": "B178", "request": "install the skill for this from the marketplace", "cap": "marketplace", "source": "authored"}
+{"id": "B179", "request": "verify this claim with real evidence before you tell me", "cap": "verification", "source": "authored"}
+{"id": "B180", "request": "prove it works before we call it done", "cap": "verification", "source": "authored"}
+{"id": "B181", "request": "look at this page and tell me what is wrong with the design", "cap": "design-critique", "source": "authored"}
+{"id": "B182", "request": "critique the visual quality of these screens", "cap": "design-critique", "source": "authored"}

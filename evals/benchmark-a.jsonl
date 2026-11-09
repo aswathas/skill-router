@@ -1,0 +1,60 @@
+{"id": "A001", "request": "set up gmail so new mail lands in a sheet automatically", "cap": "app-automation", "source": "authored"}
+{"id": "A002", "request": "push my sales pipeline records into crm every night", "cap": "app-automation", "source": "authored"}
+{"id": "A003", "request": "make an automation that files receipts into a drive folder", "cap": "app-automation", "source": "authored"}
+{"id": "A004", "request": "wire my calendar to a slack channel so meetings announce themselves", "cap": "app-automation", "source": "authored"}
+{"id": "A005", "request": "automatically create a trello card from new form submissions", "cap": "app-automation", "source": "authored"}
+{"id": "A006", "request": "keep my whatsapp contacts synced with the sheet", "cap": "app-automation", "source": "authored"}
+{"id": "A007", "request": "compare the top three cloud providers for a small team and tell me which fits", "cap": "research", "source": "authored"}
+{"id": "A008", "request": "look into whether this startup idea has any real market", "cap": "research", "source": "authored", "skill": "research"}
+{"id": "A009", "request": "gather what we know about lithium supply chains before i commit", "cap": "research", "source": "authored"}
+{"id": "A010", "request": "survey the options for offline storage and narrow it down", "cap": "research", "source": "authored"}
+{"id": "A011", "request": "find out what the new tax rules mean for us", "cap": "research", "source": "authored"}
+{"id": "A012", "request": "investigate the market for green hydrogen electrolyzers in india", "cap": "research", "source": "authored", "skill": "research"}
+{"id": "A013", "request": "what are the realistic risks of migrating off postgres", "cap": "research", "source": "authored"}
+{"id": "A014", "request": "break this quarter's work into milestones with dependencies", "cap": "planning", "source": "authored"}
+{"id": "A015", "request": "turn this vague goal into a phased delivery plan", "cap": "planning", "source": "authored"}
+{"id": "A016", "request": "lay out a roadmap for the payments rewrite", "cap": "planning", "source": "authored"}
+{"id": "A017", "request": "what order should we ship these five features in", "cap": "planning", "source": "authored"}
+{"id": "A018", "request": "help me split this epic into shippable chunks", "cap": "planning", "source": "authored"}
+{"id": "A019", "request": "read through my branch and tell me what is wrong with it", "cap": "code-review", "source": "authored", "skill": "code-review"}
+{"id": "A020", "request": "look over this diff for problems before i push", "cap": "code-review", "source": "authored"}
+{"id": "A021", "request": "check my changes against the standards we agreed on", "cap": "code-review", "source": "authored"}
+{"id": "A022", "request": "sanity check this pull request for obvious mistakes", "cap": "code-review", "source": "authored"}
+{"id": "A023", "request": "critique the structure of this module", "cap": "code-review", "source": "authored"}
+{"id": "A024", "request": "give me feedback on the quality of these edits", "cap": "code-review", "source": "authored"}
+{"id": "A025", "request": "this function returns null sometimes and i cannot see why", "cap": "debugging", "source": "authored", "skill": "diagnosing-bugs"}
+{"id": "A026", "request": "the site throws a blank page only in production", "cap": "debugging", "source": "authored"}
+{"id": "A027", "request": "find the root cause of this stack trace", "cap": "debugging", "source": "authored"}
+{"id": "A028", "request": "the api times out under load, where is the bottleneck", "cap": "debugging", "source": "authored"}
+{"id": "A029", "request": "why does my test pass locally but fail in ci", "cap": "debugging", "source": "authored"}
+{"id": "A030", "request": "this stopped working after the last release, help me trace it", "cap": "debugging", "source": "authored"}
+{"id": "A031", "request": "write unit tests covering the auth helper", "cap": "testing", "source": "authored"}
+{"id": "A032", "request": "add integration tests around the checkout flow", "cap": "testing", "source": "authored"}
+{"id": "A033", "request": "set up a test harness so i can verify the parser", "cap": "testing", "source": "authored"}
+{"id": "A034", "request": "check that my change does not break the contract", "cap": "testing", "source": "authored"}
+{"id": "A035", "request": "raise coverage on the payments module", "cap": "testing", "source": "authored"}
+{"id": "A036", "request": "i need a failing test first, then the fix", "cap": "testing", "source": "authored"}
+{"id": "A037", "request": "this function has grown too big, split it up", "cap": "refactoring", "source": "authored"}
+{"id": "A038", "request": "clean up the duplicated logic across these three files", "cap": "refactoring", "source": "authored"}
+{"id": "A039", "request": "simplify the module without changing behaviour", "cap": "refactoring", "source": "authored"}
+{"id": "A040", "request": "remove the dead code and reduce complexity", "cap": "refactoring", "source": "authored"}
+{"id": "A041", "request": "tidy the nested conditionals in this handler", "cap": "refactoring", "source": "authored"}
+{"id": "A042", "request": "make this patch surgical instead of rewriting everything", "cap": "refactoring", "source": "authored"}
+{"id": "A043", "request": "how should i split this monolith into services", "cap": "architecture", "source": "authored"}
+{"id": "A044", "request": "design the module structure for the new billing area", "cap": "architecture", "source": "authored"}
+{"id": "A045", "request": "work out the data model for orders and invoices", "cap": "architecture", "source": "authored"}
+{"id": "A046", "request": "sketch the system layout for the sync pipeline", "cap": "architecture", "source": "authored"}
+{"id": "A047", "request": "decide where this responsibility belongs", "cap": "architecture", "source": "authored"}
+{"id": "A048", "request": "write the readme for this module", "cap": "documentation", "source": "authored"}
+{"id": "A049", "request": "turn this design into a spec people can read", "cap": "documentation", "source": "authored"}
+{"id": "A050", "request": "draft a proposal for the new api", "cap": "documentation", "source": "authored"}
+{"id": "A051", "request": "write a decision doc for why we picked postgres", "cap": "documentation", "source": "authored"}
+{"id": "A052", "request": "document how the plugin system works", "cap": "documentation", "source": "authored"}
+{"id": "A053", "request": "write the user manual for this cli", "cap": "docs-authoring", "source": "authored"}
+{"id": "A054", "request": "generate a changelog from the commits since last release", "cap": "docs-authoring", "source": "authored"}
+{"id": "A055", "request": "audit our claude.md file, it has grown fat", "cap": "docs-authoring", "source": "authored"}
+{"id": "A056", "request": "write a handover note for whoever picks this up next week", "cap": "docs-authoring", "source": "authored"}
+{"id": "A057", "request": "write a blog post about our journey with this rewrite", "cap": "writing", "source": "authored"}
+{"id": "A058", "request": "draft a status update for the whole team", "cap": "writing", "source": "authored"}
+{"id": "A059", "request": "ghostwrite a linkedin announcement", "cap": "writing", "source": "authored"}
+{"id": "A060", "request": "write an internal memo about the incident", "cap": "writing", "source": "authored"}
