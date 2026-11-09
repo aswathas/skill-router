@@ -34,10 +34,23 @@ sys.path.insert(0, str(HERE))
 import run_eval  # noqa: E402
 
 
+def shipped_state_dir():
+    """The live router state, where the shipped taxonomy and ledger live."""
+    return Path(os.environ.get("SKILL_ROUTER_ORIGINAL_STATE_DIR")
+                or (Path.home() / ".minimax" / "local-runtime" / "skill-learning"))
+
+
 def build_registry_with(caps_path, state_dir):
-    """Build a registry using a given taxonomy, in a throwaway state dir."""
+    """Build a registry using a given taxonomy, in a throwaway state dir.
+
+    The outcome ledger is copied alongside the taxonomy so the only thing
+    that differs between the arms is the taxonomy itself.
+    """
     state_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy2(caps_path, state_dir / "capabilities.json")
+    ledger = shipped_state_dir() / "ledger.json"
+    if ledger.is_file():
+        shutil.copy2(ledger, state_dir / "ledger.json")
     env = dict(os.environ)
     env["SKILL_ROUTER_STATE_DIR"] = str(state_dir)
     proc = subprocess.run([sys.executable, str(BUILD)],
@@ -91,12 +104,15 @@ def main():
         inv1, reg1, cap1 = load_router_for(v1_state)
         rows_v1 = run_eval.evaluate("full", cases, reg1, cap1, inv1)
 
-        # the shipped state directory, explicitly: the v1 run above pointed
-        # SKILL_ROUTER_STATE_DIR at the throwaway directory
-        shipped_state = Path(os.environ.get("SKILL_ROUTER_ORIGINAL_STATE_DIR")
-                             or (Path.home() / ".minimax" / "local-runtime"
-                                 / "skill-learning"))
-        inv2, reg2, cap2 = load_router_for(shipped_state)
+        # The v2 arm is built the same way as the v1 arm - a fresh registry
+        # from the same scan - so the two arms differ ONLY in the taxonomy.
+        # Reading v2 from the cached shipped registry would silently compare
+        # two different skill universes whenever the catalogue has changed
+        # since the cache was written.
+        v2_state = build_registry_with(
+            ROOT / "skills" / "aswath-capability" / "registry" / "capabilities.json",
+            tmp / "v2")
+        inv2, reg2, cap2 = load_router_for(v2_state)
         rows_v2 = run_eval.evaluate("full", cases, reg2, cap2, inv2)
 
         s1, s2 = summarise(rows_v1), summarise(rows_v2)
