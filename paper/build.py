@@ -37,7 +37,7 @@ RESULTS_SUBSECTIONS = [
       "difference at +0.200 with a 95 percent interval of [0.155, 0.247].",
       "Against BM25 the router is right where BM25 is wrong on 119 cases "
       "and wrong where it is right on 7, an MRR difference of +0.308 with an "
-      "interval of [0.259, 0.356] and a corrected p of 2.0e-26. The "
+      "interval of [0.259, 0.356] and a corrected p of 1.1e-26. The "
       "capability-level metric separates the two systems decisively; the "
       "strict metric does not, and we say which is which.",
       "Cases are not independent: several cases expect the same capability, "
