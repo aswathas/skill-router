@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "name": "aswath-skill-router",
+  "displayName": "Aswath Skill Router",
+  "version": "0.1.0",
+  "description": "Learns which skill a request actually needs from what really happens in a session - the ask, the edits, the corrections, the deletes - and feeds that back into the capability router so the same mistake is not made twice.",
+  "author": "Aswath",
+  "icon": "icon.png",
+  "category": "Productivity",
+  "exampleQueries": [
+    "Which skill does this request actually need?",
+    "What has the router learned about my skill choices?",
+    "Learn from this session and update the routing ledger."
+  ],
+  "apps": [],
+  "mcpServers": [],
+  "skills": [],
+  "hooks": [
+    "hooks/hooks.json"
+  ]
+}
