@@ -48,7 +48,7 @@ Everything in this directory is generated. Nothing here needs editing by hand.
 5. Under "Comments", use:
 
    ~~~text
-   6 pages, 3 tables. Public artefact (router, capability taxonomy, 298-case
+   7 pages, 9 tables. Public artefact (router, capability taxonomy, 298-case
    evaluation harness and benchmark): https://github.com/aswathas/skill-router
    ~~~
 

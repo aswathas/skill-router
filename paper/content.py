@@ -646,6 +646,10 @@ TABLE_SPECS = [
      "system"),
 ]
 
+N_CASES = len(_RAW_RESULTS["cases"])
+N_STRICT = sum(1 for c in _RAW_RESULTS["cases"] if c.get("expected_skill"))
+N_TABLES = len(TABLE_SPECS)
+
 RESULTS = {
     "routing": _routing_table(_RAW_RESULTS["systems"]),
     "isolation": _isolation_table(_RAW_RESULTS["systems"]),
