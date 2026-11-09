@@ -45,7 +45,7 @@ skills:
     enabled: false
 ~~~
 
-That removes 1,205 of 1,241 visible skills. The data directory root cannot be
+That removes 1,343 of 1,387 visible skills. The data directory root cannot be
 gated this way — the host always scans it — so the skills that live there are
 **parked**: moved to `skills-off/` with a manifest at
 `skills-off-manifest.json` recording what was moved.
@@ -53,7 +53,7 @@ gated this way — the host always scans it — so the skills that live there ar
 A move is not a copy: no disk cost, and `restore <name>` is one move back.
 The keep set is explicit in `bin/park-skills.py`.
 
-> **Note.** `~/.agents/skills` is *not* parked. All 1,073 local registry skills
+> **Note.** `~/.agents/skills` is *not* parked. All 1,084 local registry skills
 > live there; parking it would empty the router's own library. The catalog
 > gate already hides it from the host, which is all that is needed.
 

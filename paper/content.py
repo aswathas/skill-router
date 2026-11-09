@@ -32,14 +32,15 @@ ABSTRACT = (
     "that scores skills from what actually happens in a session rather than "
     "from the request text. The router reaches 0.849 capability top-1 "
     "accuracy against 0.614 for a faithfully reimplemented pre-fix matcher "
-    "and 0.477 for Okapi BM25 over skill descriptions, and raises an "
-    "on-topic rate from 0.460 to 0.795, while the runtime catalog falls from "
-    "1,241 skills to 36 and the catalog listing cost from 1.87M tokens to "
-    "62.1K. We make the taxonomy, not the ranker, the object of study: an "
+    "and 0.473 for Okapi BM25 over skill descriptions, and raises an "
+    "on-topic rate from 0.460 to 0.799, while the runtime catalog falls from "
+    "1,387 skills to 44 and the catalog listing cost from 1.92M tokens to "
+    "89.2K. We make the taxonomy, not the ranker, the object of study: an "
     "error analysis shows that 98 of 101 failures were cases where the "
     "request never named the expected capability, and repairing the taxonomy "
-    "on one half of the benchmark lifts accuracy from 0.661 to 0.849 on the "
-    "other half (p = 1.7e-14). We also report three negative results: the "
+    "on one half of the benchmark lifts accuracy on the held-out half from "
+    "0.556 to 0.742, and over the whole benchmark from 0.661 to 0.849 "
+    "(p = 3.2e-15). We also report three negative results: the "
     "outcome ledger does not measurably improve routing at the scale of our "
     "evidence, BM25 ties the full router on exact-skill selection, and "
     "per-invocation token cost rises as accuracy rises."
@@ -65,7 +66,7 @@ S("Introduction",
   "The obvious answer, and the one most agent hosts take, is to expose every "
   "skill to the model and let it choose. This works until it does not. The "
   "catalog itself becomes a fixed cost on every single request. On the "
-  "machine studied here, 1,241 skills were visible to the agent, and the "
+  "machine studied here, 1,387 skills were visible to the agent, and the "
   "skills that the agent actually needed were a tiny minority of them.",
 
   "We built a capability-routing system to fix this, and we report it with "
@@ -94,7 +95,8 @@ S("Introduction",
   "request named the expected capability at all showed that 98 of 101 "
   "failures were inference misses and only three were ranking misses. "
   "Repairing the taxonomy on one half of the benchmark lifted accuracy on "
-  "the other half from 0.661 to 0.849.",
+  "the held-out half from 0.556 to 0.742, and over the whole benchmark "
+  "from 0.661 to 0.849.",
 
   "Three negative results, stated plainly. The learning loop does not "
   "measurably improve routing at our scale; a textbook BM25 retriever ties "
@@ -182,7 +184,7 @@ S("The System",
 S("Catalog gating and parking",
   "The host reads three external skill roots plus its own data directory, and "
   "exposes all of them by default. A single configuration key disables the "
-  "three external roots, which removes 1,205 of the 1,241 visible skills "
+  "three external roots, which removes 1,343 of the 1,387 visible skills "
   "without touching the data directory root, which the host always scans.",
 
   "Skills that live in the always-scanned root cannot be gated by "
@@ -192,10 +194,10 @@ S("Catalog gating and parking",
   "copy, so it costs no disk space and is reversible by moving the "
   "directory back.",
 
-  "The residual 36 skills are the token-control skills, the router itself, "
+  "The residual 44 skills are the token-control skills, the router itself, "
   "the forge family and the native evolution channel. The catalog listing "
-  "cost falls from an estimated 1.87M tokens to 62.1K, a 96.7% reduction, "
-  "and the visible catalog falls from 1,241 entries to 36, a 97.1% "
+  "cost falls from an estimated 1.92M tokens to 89.2K, a 95.4% reduction, "
+  "and the visible catalog falls from 1,387 entries to 44, a 96.8% "
   "reduction.")
 
 S("The capability taxonomy",
@@ -370,7 +372,7 @@ S("Threats to Validity",
   "weaker of the two labelling schemes: a skill can carry the expected "
   "capability and still be a poor answer, which is why we report the strict "
   "subset and the taxonomy-independent on-topic rate alongside it. The "
-  "evaluation runs against a registry of 4,205 skills on one machine with "
+  "evaluation runs against a registry of 4,225 skills on one machine with "
   "one catalogue of third-party skills, so the results should not be read as "
   "generalising to other collections. The learning loop is evaluated with "
   "only 19 scored skills, which is too few to measure its effect, and we "
@@ -469,12 +471,41 @@ def _routing_table(sysm):
 
 
 def _isolation_table(sysm):
-    rows = [["system", "n", "top-1", "top-3"]]
+    """Accuracy on the lexically isolated subset, under both definitions.
+
+    Which cases count as isolated depends on the keyword lists used to
+    define the subset, so the table shows both: the shipped taxonomy's
+    lists and the pre-repair lists. Every system is scored on the same
+    subset within each column pair.
+    """
+    iso = ANALYSIS.get("isolation", {})
+    shipped = iso.get("shipped_taxonomy", {})
+    pre = iso.get("pre_repair_taxonomy", {})
+    if not shipped:
+        rows = [["system", "n", "top-1", "top-3"]]
+        for key, label in SYSTEM_LABELS:
+            s = sysm[key]
+            if "iso_n" not in s:
+                continue
+            rows.append([label, str(s["iso_n"]), _f(s["iso_top1"]),
+                         _f(s["iso_top3"])])
+        return rows
+    n_ship = str(shipped.get("n", ""))
+    n_pre = str(pre.get("n", ""))
+    rows = [["system", "shipped lists (n=" + n_ship + ")", "top-1", "top-3",
+             "pre-repair lists (n=" + n_pre + ")", "top-1", "top-3"]]
     for key, label in SYSTEM_LABELS:
-        s = sysm[key]
-        if "iso_n" not in s:
+        a = shipped.get("systems", {}).get(key)
+        b = pre.get("systems", {}).get(key)
+        if not a and not b:
             continue
-        rows.append([label, str(s["iso_n"]), _f(s["iso_top1"]), _f(s["iso_top3"])])
+        rows.append([
+            label,
+            _f(a["cap_top1"]) if a else "-",
+            _f(a["cap_top3"]) if a else "-",
+            _f(b["cap_top1"]) if b else "-",
+            _f(b["cap_top3"]) if b else "-",
+        ])
     return rows
 
 

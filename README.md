@@ -7,12 +7,12 @@ system that keeps the catalog small, and routes each request to **exactly one**
 skill that actually fits — plus the evidence, the evaluation harness and the
 paper that measures whether it works.
 
-It was built and measured on one machine with **4,218 installed skills**.
+It was built and measured on one machine with **4,225 installed skills**.
 
 | | before | after |
 |---|---|---|
-| skills visible to the agent | 1,241 | **36** (−97.1%) |
-| catalog listing cost (tokens, est.) | 1,867,228 | **62,121** (−96.7%) |
+| skills visible to the agent | 1,387 | **44** (−96.8%) |
+| catalog listing cost (tokens, est.) | 1,922,567 | **89,205** (−95.4%) |
 | capabilities in the taxonomy | 51 | **78** |
 | skills no capability could reach | 845 | **0** |
 | tags unsupported by their own evidence | 78 | **0** |
@@ -21,11 +21,11 @@ Routing accuracy over a 298-case benchmark:
 
 | system | capability top-1 | strict top-1 | MRR | on-topic | mean tokens |
 |---|---|---|---|---|---|
-| random | 0.013 | 0.000 | 0.030 | 0.040 | 2,420 |
+| random | 0.010 | 0.000 | 0.022 | 0.050 | 2,153 |
 | name-only | 0.198 | 0.127 | 0.292 | 0.248 | 703 |
-| BM25 (real retrieval baseline) | 0.477 | **0.397** | 0.570 | 0.564 | 1,898 |
+| BM25 (real retrieval baseline) | 0.473 | **0.397** | 0.570 | 0.560 | 1,898 |
 | keyword-substring (pre-fix) | 0.614 | 0.206 | 0.678 | 0.460 | 592 |
-| **full (shipped)** | **0.849** | **0.397** | **0.878** | **0.795** | 2,862 |
+| **full (shipped)** | **0.849** | **0.397** | **0.878** | **0.799** | 2,881 |
 
 The paper reports three negative results honestly: the outcome ledger does not
 measurably improve routing at this scale, **BM25 ties the full router on
@@ -34,8 +34,9 @@ exact-skill selection**, and accuracy rises with token cost.
 The biggest single gain came from the **taxonomy**, not the ranker. An error
 analysis showed that 98 of 101 failures were cases where the request never
 named the expected capability at all. Repairing the taxonomy on one half of
-the benchmark lifted accuracy on the other half from 0.661 to 0.849
-(p = 1.7e-14); see [docs/EVALUATION.md](docs/EVALUATION.md).
+the benchmark lifted accuracy on the held-out half from 0.556 to 0.742, and
+over the whole benchmark from 0.661 to 0.849 (p = 3.2e-15); see
+[docs/EVALUATION.md](docs/EVALUATION.md).
 
 **[Read the paper](paper/skill-router.pdf)** · [LaTeX source](paper/skill-router.tex)
 
@@ -62,15 +63,17 @@ token rather than as raw substrings, and — the part that matters most — an
 auditor that uses *exactly* the same evidence rules as the tagger. When they
 disagreed, the audit output was noise. The audit is a maintained artefact with
 its own metrics (unroutable skills, stale tags), not a one-off annotation pass.
-This is the load-bearing contribution: 845 of 1,318 skills had no reachable
-capability until a small number of families were named.
+This is the load-bearing contribution: on the pre-repair taxonomy, 845 of
+1,318 local and plugin skills had no reachable capability until a small number
+of families were named.
 
 **3. An evaluation protocol that resists its own taxonomy.**
 Benchmark requests are paraphrased to avoid the taxonomy's keyword strings,
 the harness *computes* a lexically isolated subset and reports it separately,
-and an on-topic rate consults no taxonomy at all. The result is unflattering
-and reported anyway: on the isolated subset the shipped router is worse than
-the baseline it replaces.
+and an on-topic rate consults no taxonomy at all. The subset is measured under
+two definitions, and the result is unflattering and reported anyway: on
+isolated cases the shipped router drops to less than half its overall
+accuracy.
 
 **4. Two negative results, stated rather than smoothed.**
 The outcome ledger — Reflexion's intuition applied to skill selection — does
@@ -94,7 +97,7 @@ why the selection cannot be trained the way tool selection usually is.
 Five coupled parts. Each one exists because the measurement demanded it.
 
 1. **Catalog gating.** The host exposes three external skill roots by default.
-   One configuration key turns them off, removing 1,205 of 1,241 visible
+   One configuration key turns them off, removing 1,343 of 1,387 visible
    skills without touching the data directory root the host always scans.
 2. **Parking.** Skills in the always-scanned root cannot be gated by config.
    They are *moved* to a holding directory with a manifest, so any one of them
@@ -200,7 +203,8 @@ per case), a taxonomy-independent **on-topic** rate, and on-invoke token cost.
 
 The benchmark is written in natural language and deliberately avoids the
 taxonomy's own keyword strings where a paraphrase exists. The harness computes
-a **lexically isolated subset** (126 cases) and reports it separately, so the
+a **lexically isolated subset** (66 cases under the shipped taxonomy, 126 under
+the pre-repair lists) and reports it separately, so the
 evaluation is not circular.
 
 See [docs/EVALUATION.md](docs/EVALUATION.md).

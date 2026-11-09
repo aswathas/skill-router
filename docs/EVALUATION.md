@@ -27,8 +27,9 @@ python taxonomy_ablation.py   # ~3 minutes
 
 **298 cases**: 293 authored, 5 historical. The authored cases cover **61 of the
 78 capabilities**. **63** cases carry a single expected skill (the strict
-subset). **126** cases share no exact keyword string with the expected
-capability (the lexically isolated subset).
+subset). **66** cases share no exact keyword string with the expected
+capability under the shipped taxonomy (the lexically isolated subset); under the
+pre-repair taxonomy's keyword lists the subset holds **126** cases.
 
 ### Two guards against circularity
 
@@ -62,19 +63,19 @@ case was visible.
 
 | system | cap top-1 | cap top-3 | MRR | strict top-1 | on-topic | mean tok | median tok |
 |---|---|---|---|---|---|---|---|
-| random | 0.013 | 0.054 | 0.030 | 0.000 | 0.040 | 2,420 | 1,585 |
+| random | 0.010 | 0.040 | 0.022 | 0.000 | 0.050 | 2,153 | 1,294 |
 | name-only | 0.198 | 0.332 | 0.292 | 0.127 | 0.248 | 703 | 336 |
-| BM25 | 0.477 | 0.624 | 0.570 | **0.397** | 0.564 | 1,898 | 1,215 |
+| BM25 | 0.473 | 0.631 | 0.570 | **0.397** | 0.560 | 1,898 | 1,215 |
 | keyword-substring (pre-fix) | 0.614 | 0.708 | 0.678 | 0.206 | 0.460 | 592 | 214 |
-| no-ledger | 0.849 | 0.889 | 0.876 | 0.413 | 0.799 | 2,782 | 1,539 |
-| no-cost-gate | 0.849 | 0.893 | 0.877 | 0.397 | 0.792 | 3,096 | 1,608 |
+| no-ledger | 0.849 | 0.889 | 0.876 | 0.413 | 0.802 | 2,801 | 1,539 |
+| no-cost-gate | 0.849 | 0.893 | 0.878 | 0.397 | 0.795 | 3,114 | 1,683 |
 | full-budget (2K) | 0.829 | 0.859 | 0.847 | 0.365 | 0.711 | 1,402 | 1,011 |
-| **full (shipped)** | **0.849** | **0.893** | **0.878** | 0.397 | **0.795** | 2,862 | 1,550 |
+| **full (shipped)** | **0.849** | **0.893** | **0.878** | 0.397 | **0.799** | 2,881 | 1,550 |
 
 ### The headline is two different stories
 
 - **Which capability does this request belong to?** The taxonomy wins
-  decisively: 0.849 against 0.614 for the pre-fix matcher and 0.477 for BM25.
+  decisively: 0.849 against 0.614 for the pre-fix matcher and 0.473 for BM25.
 - **Which exact skill should I load?** BM25 **ties** the full router at 0.397.
   The pre-fix matcher is far behind at 0.206.
 
@@ -88,12 +89,12 @@ bootstrap over MRR, and Holm correction across the baselines.
 
 | baseline | full only right | baseline only right | MRR diff | 95% CI (cases) | McNemar p (Holm) |
 |---|---|---|---|---|---|
-| random | 251 | 2 | +0.848 | [0.809, 0.886] | 2.7e-71 |
-| name-only | 198 | 4 | +0.586 | [0.536, 0.633] | 1.1e-52 |
+| random | 250 | 0 | +0.856 | [0.820, 0.891] | 7.7e-75 |
+| name-only | 198 | 4 | +0.585 | [0.536, 0.633] | 1.3e-52 |
 | keyword-substring | 80 | 10 | +0.200 | [0.155, 0.247] | 4.2e-14 |
-| full-budget | 8 | 2 | +0.031 | [0.013, 0.050] | 0.33 |
+| full-budget | 8 | 2 | +0.030 | [0.013, 0.050] | 0.33 |
 | no-ledger | 0 | 0 | +0.002 | [-0.001, 0.004] | 1 |
-| no-cost-gate | 0 | 0 | +0.001 | [0.000, 0.001] | 1 |
+| no-cost-gate | 0 | 0 | +0.000 | [-0.001, 0.001] | 1 |
 
 Cases are clustered by expected capability, so the harness also reports a
 bootstrap that resamples **capabilities** rather than cases. The conclusion
@@ -105,7 +106,7 @@ Wilson intervals on the headline numbers:
 |---|---|---|---|
 | full capability top-1 | 298 | 0.849 | [0.804, 0.885] |
 | pre-fix capability top-1 | 298 | 0.614 | [0.558, 0.668] |
-| full on-topic | 298 | 0.795 | [0.746, 0.837] |
+| full on-topic | 298 | 0.799 | [0.749, 0.840] |
 | pre-fix on-topic | 298 | 0.460 | [0.404, 0.516] |
 | full strict top-1 | 63 | 0.397 | [0.285, 0.520] |
 | pre-fix strict top-1 | 63 | 0.206 | [0.125, 0.322] |
@@ -119,12 +120,12 @@ been tagged before.
 
 | taxonomy | cap top-1 | strict top-1 | MRR | on-topic | mean cost |
 |---|---|---|---|---|---|
-| v1, before the repair | 0.661 | 0.381 | 0.713 | 0.802 | 2,675 |
-| v2, after the repair | **0.849** | 0.397 | **0.878** | 0.795 | 2,862 |
+| v1, before the repair | 0.661 | 0.397 | 0.712 | 0.802 | 2,434 |
+| v2, after the repair | **0.849** | 0.397 | **0.878** | 0.799 | 2,881 |
 
 Paired: the repaired taxonomy is right where the original is wrong on **59**
-cases and wrong where it is right on **3**. McNemar p = 1.7e-14. The MRR
-difference is +0.166 with a 95% paired bootstrap interval of [0.128, 0.206].
+cases and wrong where it is right on **2**. McNemar p = 3.2e-15. The MRR
+difference is +0.164 with a 95% paired bootstrap interval of [0.126, 0.204].
 
 Nothing else changed. This is the measurement behind the paper's central
 claim that the taxonomy is the load-bearing part.
@@ -149,25 +150,45 @@ repaired taxonomy, 8 favour the original, p = 2.5e-05.
 The gap between the halves, 21 points, is the size of the optimism we cannot
 rule out elsewhere. We report it rather than hide it.
 
-## Lexically isolated subset (126 cases)
+## Lexically isolated subset
+
+A case is lexically isolated when its request shares no exact keyword string
+with the expected capability's keyword lists. Which cases qualify depends on
+the lists used to define the subset, so the harness measures both the shipped
+taxonomy's lists and the pre-repair lists, which are a fixed reference
+independent of the current system. Every system is scored on the same subset.
+
+### Isolated by the shipped taxonomy (66 cases)
 
 | system | top-1 | top-3 |
 |---|---|---|
-| random | 0.024 | 0.040 |
-| name-only | 0.095 | 0.167 |
-| keyword-substring (pre-fix) | 0.254 | 0.397 |
-| no-ledger | 0.222 | 0.357 |
-| no-cost-gate | 0.222 | 0.365 |
-| full-budget (2K) | 0.167 | 0.333 |
-| full (shipped) | 0.222 | 0.365 |
+| random | 0.015 | 0.015 |
+| name-only | 0.182 | 0.288 |
+| keyword-substring (pre-fix) | 0.273 | 0.379 |
+| BM25 | 0.273 | 0.348 |
+| no-ledger | 0.364 | 0.530 |
+| no-cost-gate | 0.364 | 0.545 |
+| full-budget (2K) | 0.288 | 0.424 |
+| full (shipped) | 0.364 | 0.545 |
 
-**The shipped router is worse than the pre-fix matcher on this subset.** The
-pre-fix matcher's flat inference fires on any substring overlap and lands on
-skills carrying a wide spread of tags, which raises the chance the expected
-tag is among them. The shipped router is more discriminating: it declines to
-route when the evidence does not identify a capability, and gives up some
-accidental coverage. Discriminating and well-calibrated are not the same
-thing.
+### Isolated by the pre-repair taxonomy (126 cases)
+
+| system | top-1 | top-3 |
+|---|---|---|
+| random | 0.008 | 0.040 |
+| name-only | 0.159 | 0.254 |
+| keyword-substring (pre-fix) | 0.444 | 0.540 |
+| BM25 | 0.349 | 0.468 |
+| no-ledger | 0.659 | 0.754 |
+| no-cost-gate | 0.659 | 0.762 |
+| full-budget (2K) | 0.627 | 0.698 |
+| full (shipped) | 0.659 | 0.762 |
+
+**The shipped router is ahead on both definitions.** The absolute numbers are
+the interesting part: isolated cases are hard for every system. The shipped
+router's 0.364 on the 66-case subset is less than half its 0.849 over the
+whole benchmark. A request that avoids the taxonomy's vocabulary is a request
+the router cannot route on evidence, and it says so.
 
 ## The accuracy-cost frontier
 
@@ -177,8 +198,8 @@ thing.
 | 1,000 | 0.826 | 0.254 | 1,149 | 734 |
 | 2,000 | 0.829 | 0.365 | 1,402 | 1,011 |
 | 4,000 | 0.846 | 0.397 | 1,891 | 1,391 |
-| 8,000 | 0.849 | 0.381 | 2,250 | 1,507 |
-| none | 0.849 | 0.397 | 2,862 | 1,550 |
+| 8,000 | 0.849 | 0.381 | 2,268 | 1,518 |
+| none | 0.849 | 0.397 | 2,881 | 1,550 |
 
 A 1,000-token budget recovers 60% of the cost for 2.3 points of capability
 top-1 — but 14.3 points of strict top-1. **Cost is cheap to recover;
@@ -211,7 +232,7 @@ Delete the strongest matching keyword from the request and route it again:
 
 - cases with a matched keyword: 232
 - expected capability still inferred: 43 (0.185)
-- same skill still chosen: 78 (0.336)
+- same skill still chosen: 79 (0.341)
 
 The router is keyword-driven, not semantic. A request that says the same thing
 in different words is a different request to the router.
@@ -220,11 +241,11 @@ in different words is a different request to the router.
 
 | quantity | before | after |
 |---|---|---|
-| skills visible to the agent | 1,241 | 36 |
-| catalog listing cost (tokens, est.) | 1,867,228 | 62,121 |
+| skills visible to the agent | 1,387 | 44 |
+| catalog listing cost (tokens, est.) | 1,922,567 | 89,205 |
 | capabilities in the taxonomy | 51 | 78 |
 | skills no capability could reach | 845 | 0 |
-| skills in the registry | 4,098 | 4,218 |
+| skills in the registry | 4,098 | 4,225 |
 
 Raw numbers: `evals/results.json`, `evals/results.md`,
 `evals/analysis.json`, `evals/analysis.md`,

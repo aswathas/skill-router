@@ -16,7 +16,7 @@ spec.loader.exec_module(C)
 RESULTS_SUBSECTIONS = [
     ("Routing accuracy",
      ["The shipped router reaches 0.849 capability top-1 accuracy against "
-      "0.614 for the pre-fix matcher, a gain of 23.5 points, and 0.477 for "
+      "0.614 for the pre-fix matcher, a gain of 23.5 points, and 0.473 for "
       "Okapi BM25 over skill descriptions. Mean reciprocal rank rises from "
       "0.678 to 0.878, and from 0.570 for BM25. The strict subset tells a "
       "different story: the shipped router scores 0.397 against 0.206 for "
@@ -35,7 +35,7 @@ RESULTS_SUBSECTIONS = [
       "test puts at a raw p of 1.1e-14 and a Holm-corrected p of 4.2e-14 "
       "across the seven baselines. The paired bootstrap puts the MRR "
       "difference at +0.200 with a 95 percent interval of [0.155, 0.247].",
-      "Against BM25 the router is right where BM25 is wrong on 118 cases "
+      "Against BM25 the router is right where BM25 is wrong on 119 cases "
       "and wrong where it is right on 7, an MRR difference of +0.308 with an "
       "interval of [0.259, 0.356] and a corrected p of 2.0e-26. The "
       "capability-level metric separates the two systems decisively; the "
@@ -47,7 +47,7 @@ RESULTS_SUBSECTIONS = [
 
     ("On-topic rate",
      ["The taxonomy-independent on-topic rate is where the router's advantage "
-      "over the pre-fix matcher is largest: 0.795 against 0.460, and 0.564 "
+      "over the pre-fix matcher is largest: 0.799 against 0.460, and 0.560 "
       "for BM25. The pre-fix matcher frequently selects a cheap skill that "
       "shares a word with the request but has nothing to do with the job. "
       "The shipped router selects a skill whose description is actually "
@@ -59,7 +59,7 @@ RESULTS_SUBSECTIONS = [
       "top-1 at 0.413 against 0.397 for the shipped router, so at this scale "
       "the ledger is indistinguishable from noise. Removing the Pareto cost "
       "gate leaves both metrics unchanged and cuts mean token cost from "
-      "3,096 to 2,862. The gate is cheap and safe but close to inert.",
+      "3,114 to 2,881. The gate is cheap and safe but close to inert.",
       "The ledger result is a null result and we report it as one. With "
       "only 19 skills carrying a score, and most benchmark cases not "
       "involving them, the ledger cannot move the aggregate. We believe the "
@@ -73,10 +73,10 @@ RESULTS_SUBSECTIONS = [
       "keyword lists, with the registry rebuilt from scratch so that the "
       "skills are tagged the way they would have been tagged before. "
       "Capability top-1 moves from 0.661 to 0.849, and mean reciprocal rank "
-      "by 0.166 with a 95 percent paired bootstrap interval of [0.128, "
-      "0.206]. The repaired taxonomy is right where the original is wrong on "
-      "59 cases and wrong where it is right on 3, a paired difference that "
-      "McNemar's exact test puts at p = 1.7e-14. Nothing else changed.",
+      "by 0.164 with a 95 percent paired bootstrap interval of [0.126, "
+      "0.204]. The repaired taxonomy is right where the original is wrong on "
+      "58 cases and wrong where it is right on 2, a paired difference that "
+      "McNemar's exact test puts at p = 3.2e-15. Nothing else changed.",
       "The repair was guided by failures on one half of the benchmark, so "
       "that half is no longer an unbiased estimate: it scores 0.959. The "
       "other half was never looked at during the repair and scores 0.742, "
@@ -89,7 +89,7 @@ RESULTS_SUBSECTIONS = [
     ("The accuracy-cost frontier",
      ["Accuracy and per-invocation cost move in opposite directions. The "
       "pre-fix matcher spends a mean of 592 tokens per invocation; the "
-      "shipped router spends 2,862, nearly five times more, while improving "
+      "shipped router spends 2,881, nearly five times more, while improving "
       "accuracy. The reason is visible in the wins: on the cases the shipped "
       "router gets right and the pre-fix matcher gets wrong, the mean cost "
       "of the chosen skill rises from 249 tokens for the pre-fix matcher to "
@@ -103,8 +103,8 @@ RESULTS_SUBSECTIONS = [
 
     ("Catalog and taxonomy",
      ["The catalog effects are unambiguous. Skills visible to the agent fall "
-      "from 1,241 to 36, the catalog listing cost falls from an estimated "
-      "1.87M tokens to 62.1K, the number of capabilities rises from 51 to "
+      "from 1,387 to 44, the catalog listing cost falls from an estimated "
+      "1.92M tokens to 89.2K, the number of capabilities rises from 51 to "
       "78, the number of skills that no capability could reach falls from "
       "845 to 0, and the number of capabilities with no provider stays at 0.",
       "The registry itself grew during this work, from 4,098 to over 4,200 "
@@ -116,19 +116,22 @@ RESULTS_SUBSECTIONS = [
       "evaluation could be trusted."]),
 
     ("Lexically isolated cases",
-     ["On the 126 cases whose request shares no exact keyword string with "
-      "the expected capability, the pre-fix matcher scores 0.254 and the "
-      "shipped router 0.222. The shipped router is worse on this subset.",
-      "This is the most interesting negative in the evaluation, and it has "
-      "a clear explanation. The pre-fix matcher's flat inference fires on any "
-      "substring overlap, including weak name words, so it lands on skills "
-      "that happen to carry a wide spread of tags, which raises the chance "
-      "that the expected tag is among them. The shipped router is more "
-      "discriminating: it declines to route when the evidence does not "
-      "identify a capability, and in doing so it gives up some accidental "
-      "coverage. Discriminating and well-calibrated are not the same thing, "
-      "and on this subset the less discriminating system benefits from "
-      "luck."]),
+     ["A case is lexically isolated when its request shares no exact "
+      "keyword string with the expected capability's keyword lists. Which "
+      "cases qualify depends on the lists used to define the subset, so the "
+      "harness measures both: the shipped taxonomy's lists, and the "
+      "pre-repair lists, which are a fixed reference independent of the "
+      "current system. Every system is scored on the same subset.",
+      "Under the shipped taxonomy's lists, 66 cases are isolated and the "
+      "shipped router scores 0.364 against 0.273 for the pre-fix matcher "
+      "and 0.273 for BM25. Under the pre-repair lists, 126 cases are "
+      "isolated and the shipped router scores 0.659 against 0.444 and "
+      "0.349. The router is ahead on both definitions.",
+      "The absolute numbers are the interesting part. Isolated cases are "
+      "hard for every system: the shipped router's 0.364 on the 66-case "
+      "subset is less than half its 0.849 over the whole benchmark. A "
+      "request that avoids the taxonomy's vocabulary is a request the "
+      "router cannot route on evidence, and it says so."]),
 
     ("Error analysis",
      ["Of the 45 capability-level failures, 42 are inference misses: the "
@@ -146,7 +149,7 @@ RESULTS_SUBSECTIONS = [
     ("Robustness",
      ["Deleting the strongest matching keyword from a request and routing it "
       "again is brutal: the expected capability is still inferred in only "
-      "18.5 percent of cases, and the same skill is chosen in 33.6 percent. "
+      "18.5 percent of cases, and the same skill is chosen in 34.1 percent. "
       "The router is keyword-driven, not semantic, and it says so.",
       "We report this because it bounds the claim. The system does not "
       "understand the request; it recognises evidence in it. A request that "

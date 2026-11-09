@@ -8,7 +8,7 @@
   (`pip install reportlab`). The `.tex` needs a LaTeX install with
   `acmart` instead.
 - A skill library to route over. The shipped numbers were measured against
-  4,205 skills (1,119 local, 306 plugin, 2,780 marketplace).
+  4,225 skills (1,127 local, 318 plugin, 2,780 marketplace).
 
 ## 1. Build the registry
 
@@ -24,7 +24,7 @@ export SKILL_ROUTER_STATE_DIR="$PWD/.state"
 python skills/aswath-capability/scripts/build-registry.py
 ~~~
 
-Expected on the shipped machine: 4,205 skills, 78 capabilities.
+Expected on the shipped machine: 4,225 skills, 78 capabilities.
 
 ## 2. Audit the taxonomy
 

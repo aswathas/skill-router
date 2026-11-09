@@ -13,19 +13,19 @@
 }
 \renewcommand{\shortauthors}{Aswath A S}
 \begin{abstract}
-Coding agents increasingly ship with large libraries of skills: reusable instruction bundles that each describe one kind of job. Surfacing every skill in the prompt is unaffordable, and choosing the wrong one wastes the context window and the user's time. We present a capability-routing system for agent skill libraries, built and evaluated on one machine with over 4,200 installed skills. The system has four coupled parts: a host-level catalog gate that hides skills the agent never needs, a hand-curated capability taxonomy with evidence-based tagging, a router that resolves a free-text need to exactly one skill, and a learning loop that scores skills from what actually happens in a session rather than from the request text. The router reaches 0.849 capability top-1 accuracy against 0.614 for a faithfully reimplemented pre-fix matcher and 0.477 for Okapi BM25 over skill descriptions, and raises an on-topic rate from 0.460 to 0.795, while the runtime catalog falls from 1,241 skills to 36 and the catalog listing cost from 1.87M tokens to 62.1K. We make the taxonomy, not the ranker, the object of study: an error analysis shows that 98 of 101 failures were cases where the request never named the expected capability, and repairing the taxonomy on one half of the benchmark lifts accuracy from 0.661 to 0.849 on the other half (p = 1.7e-14). We also report three negative results: the outcome ledger does not measurably improve routing at the scale of our evidence, BM25 ties the full router on exact-skill selection, and per-invocation token cost rises as accuracy rises.
+Coding agents increasingly ship with large libraries of skills: reusable instruction bundles that each describe one kind of job. Surfacing every skill in the prompt is unaffordable, and choosing the wrong one wastes the context window and the user's time. We present a capability-routing system for agent skill libraries, built and evaluated on one machine with over 4,200 installed skills. The system has four coupled parts: a host-level catalog gate that hides skills the agent never needs, a hand-curated capability taxonomy with evidence-based tagging, a router that resolves a free-text need to exactly one skill, and a learning loop that scores skills from what actually happens in a session rather than from the request text. The router reaches 0.849 capability top-1 accuracy against 0.614 for a faithfully reimplemented pre-fix matcher and 0.473 for Okapi BM25 over skill descriptions, and raises an on-topic rate from 0.460 to 0.799, while the runtime catalog falls from 1,387 skills to 44 and the catalog listing cost from 1.92M tokens to 89.2K. We make the taxonomy, not the ranker, the object of study: an error analysis shows that 98 of 101 failures were cases where the request never named the expected capability, and repairing the taxonomy on one half of the benchmark lifts accuracy on the held-out half from 0.556 to 0.742, and over the whole benchmark from 0.661 to 0.849 (p = 3.2e-15). We also report three negative results: the outcome ledger does not measurably improve routing at the scale of our evidence, BM25 ties the full router on exact-skill selection, and per-invocation token cost rises as accuracy rises.
 \end{abstract}
 \keywords{agent skills; tool selection; capability routing; context engineering; token efficiency; taxonomy design}
 \maketitle
 \section{Introduction}
 An agent skill is a small, self-contained instruction bundle: a markdown file that tells the agent how to perform one kind of job, optionally with reference files, scripts and assets. Skills are the unit of reuse in modern coding agents. They are also cheap to write and expensive to carry. A machine that installs skills from marketplaces, from plugins and from the user's own collection accumulates them faster than any agent can read them.
-The obvious answer, and the one most agent hosts take, is to expose every skill to the model and let it choose. This works until it does not. The catalog itself becomes a fixed cost on every single request. On the machine studied here, 1,241 skills were visible to the agent, and the skills that the agent actually needed were a tiny minority of them.
+The obvious answer, and the one most agent hosts take, is to expose every skill to the model and let it choose. This works until it does not. The catalog itself becomes a fixed cost on every single request. On the machine studied here, 1,387 skills were visible to the agent, and the skills that the agent actually needed were a tiny minority of them.
 We built a capability-routing system to fix this, and we report it with an evaluation rather than an anecdote. The contributions are:
 A measurement of the problem. We quantify the cost of a large catalog and show that the useful subset is small.
 A taxonomy design that treats capability tags as claims that need evidence. We define four evidence channels with different strengths and we make the auditor and the tagger agree on what counts as evidence. Before the repair, 845 of 1,318 local and plugin skills were unreachable by construction.
 A router that resolves a need to exactly one skill. The router's design follows a simple principle: the cheapest skill that fully covers the need wins. Getting there required replacing three naive mechanisms, each of which we document because they are common.
 An evidence-driven learning loop that scores skills from what a session actually did with them. A skill is good when the files it produced survived the session, and bad when they were deleted.
-An error analysis that says where the remaining failures live, and a repair that follows from it. Categorising the failures by whether the request named the expected capability at all showed that 98 of 101 failures were inference misses and only three were ranking misses. Repairing the taxonomy on one half of the benchmark lifted accuracy on the other half from 0.661 to 0.849.
+An error analysis that says where the remaining failures live, and a repair that follows from it. Categorising the failures by whether the request named the expected capability at all showed that 98 of 101 failures were inference misses and only three were ranking misses. Repairing the taxonomy on one half of the benchmark lifted accuracy on the held-out half from 0.556 to 0.742, and over the whole benchmark from 0.661 to 0.849.
 Three negative results, stated plainly. The learning loop does not measurably improve routing at our scale; a textbook BM25 retriever ties the full router on exact-skill selection; and routing accuracy and per-invocation token cost move in opposite directions.
 The rest of the paper describes the system, the evaluation methodology, and the results, and closes with the limits of what we measured.
 
@@ -45,9 +45,9 @@ Capability taxonomies. The router needs a vocabulary of job kinds. We build it e
 The system has four coupled parts. The catalog gate and the parking mechanism decide what the model can see. The taxonomy and the registry decide what each skill is good for. The router turns a free-text need into one skill and loads it. The learning loop turns what happened in past sessions into scores that feed back into the router. A fifth part, the native skill-evolution channel, lets a broken or missing skill be reported from the command line; it was present in the host but unreachable, and repairing it was a precondition for the rest of the work.
 
 \section{Catalog gating and parking}
-The host reads three external skill roots plus its own data directory, and exposes all of them by default. A single configuration key disables the three external roots, which removes 1,205 of the 1,241 visible skills without touching the data directory root, which the host always scans.
+The host reads three external skill roots plus its own data directory, and exposes all of them by default. A single configuration key disables the three external roots, which removes 1,343 of the 1,387 visible skills without touching the data directory root, which the host always scans.
 Skills that live in the always-scanned root cannot be gated by configuration. They are parked instead: the directory is moved out of the scanned root into a holding directory, with a manifest recording what was moved so that any single skill can be restored. Parking is a move, not a copy, so it costs no disk space and is reversible by moving the directory back.
-The residual 36 skills are the token-control skills, the router itself, the forge family and the native evolution channel. The catalog listing cost falls from an estimated 1.87M tokens to 62.1K, a 96.7% reduction, and the visible catalog falls from 1,241 entries to 36, a 97.1% reduction.
+The residual 44 skills are the token-control skills, the router itself, the forge family and the native evolution channel. The catalog listing cost falls from an estimated 1.92M tokens to 89.2K, a 95.4% reduction, and the visible catalog falls from 1,387 entries to 44, a 96.8% reduction.
 
 \section{The capability taxonomy}
 A capability tag is a claim that a skill provides a particular kind of job. We treat every tag as a claim that needs evidence, and we define four evidence channels of decreasing strength.
@@ -91,49 +91,50 @@ We compare eight systems. Random samples uniformly from the catalogue. Name-only
 Capability top-1 is the share of cases where the chosen skill carries the expected capability. Capability top-3 and MRR extend this to a ranked list. Strict top-1 is the share of strict-subset cases where the chosen skill is exactly the expected one. On-topic rate is the share of cases where at least a fifth of the request's content words appear in the chosen skill's name or description; it consults no taxonomy at all, so it is comparable across every system including random. Cost is the on-invoke token cost of the chosen skill, as mean and median.
 
 \section{Threats to Validity}
-The benchmark is small and written by one author, so its distribution of requests reflects one person's habits, and its labels reflect one person's reading of what each request means. Capability labels are the weaker of the two labelling schemes: a skill can carry the expected capability and still be a poor answer, which is why we report the strict subset and the taxonomy-independent on-topic rate alongside it. The evaluation runs against a registry of 4,205 skills on one machine with one catalogue of third-party skills, so the results should not be read as generalising to other collections. The learning loop is evaluated with only 19 scored skills, which is too few to measure its effect, and we report that as a null result rather than a positive one.
+The benchmark is small and written by one author, so its distribution of requests reflects one person's habits, and its labels reflect one person's reading of what each request means. Capability labels are the weaker of the two labelling schemes: a skill can carry the expected capability and still be a poor answer, which is why we report the strict subset and the taxonomy-independent on-topic rate alongside it. The evaluation runs against a registry of 4,225 skills on one machine with one catalogue of third-party skills, so the results should not be read as generalising to other collections. The learning loop is evaluated with only 19 scored skills, which is too few to measure its effect, and we report that as a null result rather than a positive one.
 
 \section{Results}
 Table 1 gives the headline numbers over all 298 cases, of which 63 carry a single expected skill. The remaining tables give the significance of the differences, the intervals around the estimates, the lexically isolated subset, the accuracy-cost frontier, the error analysis and the system-level effects.
 
 \subsection{Routing accuracy}
-The shipped router reaches 0.849 capability top-1 accuracy against 0.614 for the pre-fix matcher, a gain of 23.5 points, and 0.477 for Okapi BM25 over skill descriptions. Mean reciprocal rank rises from 0.678 to 0.878, and from 0.570 for BM25. The strict subset tells a different story: the shipped router scores 0.397 against 0.206 for the pre-fix matcher and 0.397 for BM25.
+The shipped router reaches 0.849 capability top-1 accuracy against 0.614 for the pre-fix matcher, a gain of 23.5 points, and 0.473 for Okapi BM25 over skill descriptions. Mean reciprocal rank rises from 0.678 to 0.878, and from 0.570 for BM25. The strict subset tells a different story: the shipped router scores 0.397 against 0.206 for the pre-fix matcher and 0.397 for BM25.
 That tie is the most important number in the paper. When the question is which capability a request belongs to, the taxonomy decisively beats lexical retrieval. When the question is which exact skill to load, a textbook BM25 retriever over skill descriptions matches the full router, and the pre-fix matcher is far behind. The taxonomy buys capability coverage, not skill disambiguation.
 
 \subsection{Significance}
 The comparisons are paired, case by case. Against the pre-fix matcher the shipped router is right where the baseline is wrong on 80 cases and wrong where it is right on 10, which McNemar's exact test puts at a raw p of 1.1e-14 and a Holm-corrected p of 4.2e-14 across the seven baselines. The paired bootstrap puts the MRR difference at +0.200 with a 95 percent interval of [0.155, 0.247].
-Against BM25 the router is right where BM25 is wrong on 118 cases and wrong where it is right on 7, an MRR difference of +0.308 with an interval of [0.259, 0.356] and a corrected p of 2.0e-26. The capability-level metric separates the two systems decisively; the strict metric does not, and we say which is which.
+Against BM25 the router is right where BM25 is wrong on 119 cases and wrong where it is right on 7, an MRR difference of +0.308 with an interval of [0.259, 0.356] and a corrected p of 2.0e-26. The capability-level metric separates the two systems decisively; the strict metric does not, and we say which is which.
 Cases are not independent: several cases expect the same capability, and the router behaves consistently on them. Resampling capabilities rather than cases widens the interval, and we report both. The conclusion does not depend on which is used.
 
 \subsection{On-topic rate}
-The taxonomy-independent on-topic rate is where the router's advantage over the pre-fix matcher is largest: 0.795 against 0.460, and 0.564 for BM25. The pre-fix matcher frequently selects a cheap skill that shares a word with the request but has nothing to do with the job. The shipped router selects a skill whose description is actually about the request.
+The taxonomy-independent on-topic rate is where the router's advantage over the pre-fix matcher is largest: 0.799 against 0.460, and 0.560 for BM25. The pre-fix matcher frequently selects a cheap skill that shares a word with the request but has nothing to do with the job. The shipped router selects a skill whose description is actually about the request.
 
 \subsection{Ablations}
-Neither ablation changes capability top-1, which stays at 0.849 in all three configurations. Removing the outcome ledger leaves strict top-1 at 0.413 against 0.397 for the shipped router, so at this scale the ledger is indistinguishable from noise. Removing the Pareto cost gate leaves both metrics unchanged and cuts mean token cost from 3,096 to 2,862. The gate is cheap and safe but close to inert.
+Neither ablation changes capability top-1, which stays at 0.849 in all three configurations. Removing the outcome ledger leaves strict top-1 at 0.413 against 0.397 for the shipped router, so at this scale the ledger is indistinguishable from noise. Removing the Pareto cost gate leaves both metrics unchanged and cuts mean token cost from 3,114 to 2,881. The gate is cheap and safe but close to inert.
 The ledger result is a null result and we report it as one. With only 19 skills carrying a score, and most benchmark cases not involving them, the ledger cannot move the aggregate. We believe the mechanism is sound but that its value is in long-tail cases rather than in the mean, and we have not measured that.
 
 \subsection{The taxonomy ablation}
-The paper claims the taxonomy is the load-bearing part, so we measured it instead of asserting it. The same router, the same benchmark and the same cost gate were run against the pre-repair keyword lists, with the registry rebuilt from scratch so that the skills are tagged the way they would have been tagged before. Capability top-1 moves from 0.661 to 0.849, and mean reciprocal rank by 0.166 with a 95 percent paired bootstrap interval of [0.128, 0.206]. The repaired taxonomy is right where the original is wrong on 59 cases and wrong where it is right on 3, a paired difference that McNemar's exact test puts at p = 1.7e-14. Nothing else changed.
+The paper claims the taxonomy is the load-bearing part, so we measured it instead of asserting it. The same router, the same benchmark and the same cost gate were run against the pre-repair keyword lists, with the registry rebuilt from scratch so that the skills are tagged the way they would have been tagged before. Capability top-1 moves from 0.661 to 0.849, and mean reciprocal rank by 0.164 with a 95 percent paired bootstrap interval of [0.126, 0.204]. The repaired taxonomy is right where the original is wrong on 58 cases and wrong where it is right on 2, a paired difference that McNemar's exact test puts at p = 3.2e-15. Nothing else changed.
 The repair was guided by failures on one half of the benchmark, so that half is no longer an unbiased estimate: it scores 0.959. The other half was never looked at during the repair and scores 0.742, against 0.556 for the pre-fix matcher on the same cases. The gap between the halves, 21 points, is the size of the optimism we cannot rule out elsewhere, and we would rather report it than hide it. On the held-out half the difference is still significant: 36 cases favour the repaired taxonomy, 8 favour the original, p = 2.5e-05.
 
 \subsection{The accuracy-cost frontier}
-Accuracy and per-invocation cost move in opposite directions. The pre-fix matcher spends a mean of 592 tokens per invocation; the shipped router spends 2,862, nearly five times more, while improving accuracy. The reason is visible in the wins: on the cases the shipped router gets right and the pre-fix matcher gets wrong, the mean cost of the chosen skill rises from 249 tokens for the pre-fix matcher to 2,727 for the shipped router. The pre-fix matcher was cheap because it was often wrong, and being wrong is cheap.
+Accuracy and per-invocation cost move in opposite directions. The pre-fix matcher spends a mean of 592 tokens per invocation; the shipped router spends 2,881, nearly five times more, while improving accuracy. The reason is visible in the wins: on the cases the shipped router gets right and the pre-fix matcher gets wrong, the mean cost of the chosen skill rises from 249 tokens for the pre-fix matcher to 2,727 for the shipped router. The pre-fix matcher was cheap because it was often wrong, and being wrong is cheap.
 A hard budget recovers most of the cost. Restricting the router to skills of at most 1,000 tokens whenever such a skill covers the need gives a mean of 1,149 tokens, a 60 percent reduction, for 2.3 points of capability top-1 and 14.3 points of strict top-1. The frontier is therefore shallow: cost is cheap to recover, accuracy is not.
 
 \subsection{Catalog and taxonomy}
-The catalog effects are unambiguous. Skills visible to the agent fall from 1,241 to 36, the catalog listing cost falls from an estimated 1.87M tokens to 62.1K, the number of capabilities rises from 51 to 78, the number of skills that no capability could reach falls from 845 to 0, and the number of capabilities with no provider stays at 0.
+The catalog effects are unambiguous. Skills visible to the agent fall from 1,387 to 44, the catalog listing cost falls from an estimated 1.92M tokens to 89.2K, the number of capabilities rises from 51 to 78, the number of skills that no capability could reach falls from 845 to 0, and the number of capabilities with no provider stays at 0.
 The registry itself grew during this work, from 4,098 to over 4,200 skills, because the builder was taught to read the host's built-in skill directory and its plugin directory. Before that change, 14 installed skills and a bundle of plugin skills were invisible to the router: they could be invoked by name but never selected. Making the router's view match the host's view was necessary before any evaluation could be trusted.
 
 \subsection{Lexically isolated cases}
-On the 126 cases whose request shares no exact keyword string with the expected capability, the pre-fix matcher scores 0.254 and the shipped router 0.222. The shipped router is worse on this subset.
-This is the most interesting negative in the evaluation, and it has a clear explanation. The pre-fix matcher's flat inference fires on any substring overlap, including weak name words, so it lands on skills that happen to carry a wide spread of tags, which raises the chance that the expected tag is among them. The shipped router is more discriminating: it declines to route when the evidence does not identify a capability, and in doing so it gives up some accidental coverage. Discriminating and well-calibrated are not the same thing, and on this subset the less discriminating system benefits from luck.
+A case is lexically isolated when its request shares no exact keyword string with the expected capability's keyword lists. Which cases qualify depends on the lists used to define the subset, so the harness measures both: the shipped taxonomy's lists, and the pre-repair lists, which are a fixed reference independent of the current system. Every system is scored on the same subset.
+Under the shipped taxonomy's lists, 66 cases are isolated and the shipped router scores 0.364 against 0.273 for the pre-fix matcher and 0.273 for BM25. Under the pre-repair lists, 126 cases are isolated and the shipped router scores 0.659 against 0.444 and 0.349. The router is ahead on both definitions.
+The absolute numbers are the interesting part. Isolated cases are hard for every system: the shipped router's 0.364 on the 66-case subset is less than half its 0.849 over the whole benchmark. A request that avoids the taxonomy's vocabulary is a request the router cannot route on evidence, and it says so.
 
 \subsection{Error analysis}
 Of the 45 capability-level failures, 42 are inference misses: the request never named the expected capability, so no skill carrying it could win. Two are ranking errors and one is a near miss where the right capability was in the top three. On the strict subset the pattern is different: 27 of 38 failures choose a sibling skill that carries the right capability, and only 11 choose the wrong capability.
 That is the argument for spending effort on the taxonomy rather than on the ranker, and it is why the taxonomy ablation above matters more than any ranking change. It also explains the remaining ceiling: the strict failures are a disambiguation problem, and disambiguation needs either a better model of skill intent or a human in the loop.
 
 \subsection{Robustness}
-Deleting the strongest matching keyword from a request and routing it again is brutal: the expected capability is still inferred in only 18.5 percent of cases, and the same skill is chosen in 33.6 percent. The router is keyword-driven, not semantic, and it says so.
+Deleting the strongest matching keyword from a request and routing it again is brutal: the expected capability is still inferred in only 18.5 percent of cases, and the same skill is chosen in 34.1 percent. The router is keyword-driven, not semantic, and it says so.
 We report this because it bounds the claim. The system does not understand the request; it recognises evidence in it. A request that says the same thing in different words is a different request to the router, and a learned or model-based router would be the obvious next step.
 
 \begin{table}[t]
@@ -144,13 +145,13 @@ We report this because it bounds the claim. The system does not understand the r
 \toprule
 \textbf{system} & \textbf{cap top-1} & \textbf{cap top-3} & \textbf{MRR} & \textbf{strict top-1} & \textbf{on-topic} & \textbf{mean tok} & \textbf{median tok} \\
 \midrule
-random & 0.013 & 0.054 & 0.030 & 0.000 & 0.040 & 2,420 & 1,585 \\
+random & 0.010 & 0.040 & 0.022 & 0.000 & 0.050 & 2,153 & 1,294 \\
 name-only & 0.198 & 0.332 & 0.292 & 0.127 & 0.248 & 703 & 336 \\
 keyword-substring (pre-fix) & 0.614 & 0.708 & 0.678 & 0.206 & 0.460 & 592 & 214 \\
-no-ledger & 0.849 & 0.889 & 0.876 & 0.413 & 0.799 & 2,782 & 1,539 \\
-no-cost-gate & 0.849 & 0.893 & 0.877 & 0.397 & 0.792 & 3,096 & 1,608 \\
+no-ledger & 0.849 & 0.889 & 0.876 & 0.413 & 0.802 & 2,801 & 1,539 \\
+no-cost-gate & 0.849 & 0.893 & 0.878 & 0.397 & 0.795 & 3,114 & 1,683 \\
 full-budget (2K) & 0.829 & 0.859 & 0.847 & 0.365 & 0.711 & 1,402 & 1,011 \\
-full (shipped) & 0.849 & 0.893 & 0.878 & 0.397 & 0.795 & 2,862 & 1,550 \\
+full (shipped) & 0.849 & 0.893 & 0.878 & 0.397 & 0.799 & 2,881 & 1,550 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -162,13 +163,13 @@ full (shipped) & 0.849 & 0.893 & 0.878 & 0.397 & 0.795 & 2,862 & 1,550 \\
 \toprule
 \textbf{baseline} & \textbf{full only} & \textbf{base only} & \textbf{MRR diff} & \textbf{CI (cases)} & \textbf{CI (clust)} & \textbf{p} & \textbf{p (Holm)} \\
 \midrule
-random & 251 & 2 & +0.848 & [0.809, 0.886] & 4.4e-72 & 3.1e-71 \\
-name_only & 198 & 4 & +0.586 & [0.536, 0.633] & 2.1e-53 & 1.3e-52 \\
-bm25 & 118 & 7 & +0.308 & [0.259, 0.356] & 4e-27 & 2e-26 \\
+random & 250 & 0 & +0.856 & [0.820, 0.891] & 1.1e-75 & 7.7e-75 \\
+name_only & 198 & 4 & +0.585 & [0.536, 0.633] & 2.1e-53 & 1.3e-52 \\
+bm25 & 119 & 7 & +0.308 & [0.259, 0.356] & 2.1e-27 & 1.1e-26 \\
 keyword_substring & 80 & 10 & +0.200 & [0.155, 0.247] & 1.1e-14 & 4.2e-14 \\
-full_budget & 8 & 2 & +0.031 & [0.013, 0.050] & 0.11 & 0.33 \\
+full_budget & 8 & 2 & +0.030 & [0.013, 0.050] & 0.11 & 0.33 \\
 no_ledger & 0 & 0 & +0.002 & [-0.001, 0.004] & 1 & 1 \\
-no_cost_gate & 0 & 0 & +0.001 & [0.000, 0.001] & 1 & 1 \\
+no_cost_gate & 0 & 0 & +0.000 & [-0.001, 0.001] & 1 & 1 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -182,7 +183,7 @@ no_cost_gate & 0 & 0 & +0.001 & [0.000, 0.001] & 1 & 1 \\
 \midrule
 full cap top1 & 298 & 0.849 & [0.804, 0.885] \\
 baseline cap top1 & 298 & 0.614 & [0.558, 0.668] \\
-full on topic & 298 & 0.795 & [0.746, 0.837] \\
+full on topic & 298 & 0.799 & [0.749, 0.840] \\
 baseline on topic & 298 & 0.460 & [0.404, 0.516] \\
 full strict top1 & 63 & 0.397 & [0.285, 0.520] \\
 baseline strict top1 & 63 & 0.206 & [0.125, 0.322] \\
@@ -206,17 +207,17 @@ test & 151 & 0.742 & 0.556 & 0.406 & 0.188 \\
 \centering
 \caption{Accuracy on the lexically isolated subset, where the request shares no exact keyword string with the expected capability.}
 \label{tab:isolation}
-\begin{tabular}{lccc}
+\begin{tabular}{lcccccc}
 \toprule
-\textbf{system} & \textbf{n} & \textbf{top-1} & \textbf{top-3} \\
+\textbf{system} & \textbf{shipped lists (n=66)} & \textbf{top-1} & \textbf{top-3} & \textbf{pre-repair lists (n=126)} & \textbf{top-1} & \textbf{top-3} \\
 \midrule
-random & 66 & 0.030 & 0.076 \\
-name-only & 66 & 0.182 & 0.288 \\
-keyword-substring (pre-fix) & 66 & 0.273 & 0.379 \\
-no-ledger & 66 & 0.364 & 0.530 \\
-no-cost-gate & 66 & 0.364 & 0.545 \\
-full-budget (2K) & 66 & 0.288 & 0.424 \\
-full (shipped) & 66 & 0.364 & 0.545 \\
+random & 0.015 & 0.015 & 0.008 & 0.040 \\
+name-only & 0.182 & 0.288 & 0.159 & 0.254 \\
+keyword-substring (pre-fix) & 0.273 & 0.379 & 0.444 & 0.540 \\
+no-ledger & 0.364 & 0.530 & 0.659 & 0.754 \\
+no-cost-gate & 0.364 & 0.545 & 0.659 & 0.762 \\
+full-budget (2K) & 0.288 & 0.424 & 0.627 & 0.698 \\
+full (shipped) & 0.364 & 0.545 & 0.659 & 0.762 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -232,8 +233,8 @@ full (shipped) & 66 & 0.364 & 0.545 \\
 1000 & 0.826 & 0.254 & 1,149 & 734 \\
 2000 & 0.829 & 0.365 & 1,402 & 1,011 \\
 4000 & 0.846 & 0.397 & 1,891 & 1,391 \\
-8000 & 0.849 & 0.381 & 2,250 & 1,507 \\
-none & 0.849 & 0.397 & 2,862 & 1,550 \\
+8000 & 0.849 & 0.381 & 2,268 & 1,518 \\
+none & 0.849 & 0.397 & 2,881 & 1,550 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -261,8 +262,8 @@ strict: wrong capability & 11 \\
 \toprule
 \textbf{taxonomy} & \textbf{cap top-1} & \textbf{strict top-1} & \textbf{MRR} & \textbf{on-topic} & \textbf{mean cost} \\
 \midrule
-v1, before the repair & 0.661 & 0.397 & 0.712 & 0.799 & 2,522 \\
-v2, after the repair & 0.849 & 0.397 & 0.878 & 0.795 & 2,862 \\
+v1, before the repair & 0.661 & 0.381 & 0.714 & 0.805 & 2,587 \\
+v2, after the repair & 0.849 & 0.397 & 0.878 & 0.799 & 2,881 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -274,12 +275,12 @@ v2, after the repair & 0.849 & 0.397 & 0.878 & 0.795 & 2,862 \\
 \toprule
 \textbf{quantity} & \textbf{before} & \textbf{after} \\
 \midrule
-skills visible to the agent & 1,241 & 36 \\
-catalog listing cost (tokens, est.) & 1,867,228 & 62,121 \\
+skills visible to the agent & 1,387 & 44 \\
+catalog listing cost (tokens, est.) & 1,922,567 & 89,205 \\
 capabilities in the taxonomy & 51 & 78 \\
 skills no capability could reach & 845 & 0 \\
 tags unsupported by their evidence & 78 & 0 \\
-skills in the registry & 4,098 & 4,218 \\
+skills in the registry & 4,098 & 4,225 \\
 \bottomrule
 \end{tabular}
 \end{table}
