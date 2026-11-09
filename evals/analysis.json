@@ -1,0 +1,504 @@
+{
+  "n_cases": 298,
+  "n_authored": 293,
+  "n_historical": 5,
+  "significance": {
+    "keyword_substring": {
+      "discordant_full_only": 80,
+      "discordant_baseline_only": 10,
+      "mcnemar_p_raw": 1.0521598690598086e-14,
+      "mrr_diff": 0.2000157570203413,
+      "mrr_ci_low": 0.1549036955021115,
+      "mrr_ci_high": 0.24681932887900043,
+      "cluster_ci_low": 0.13331657856255227,
+      "cluster_ci_high": 0.27055097818275675,
+      "clusters": 74,
+      "mcnemar_p_holm": 4.2086394762392343e-14
+    },
+    "bm25": {
+      "discordant_full_only": 118,
+      "discordant_baseline_only": 7,
+      "mcnemar_p_raw": 3.98143732417019e-27,
+      "mrr_diff": 0.30800002582880126,
+      "mrr_ci_low": 0.2590849768404077,
+      "mrr_ci_high": 0.3558869219165586,
+      "cluster_ci_low": 0.24030077309213044,
+      "cluster_ci_high": 0.3748007366966476,
+      "clusters": 74,
+      "mcnemar_p_holm": 1.990718662085095e-26
+    },
+    "no_ledger": {
+      "discordant_full_only": 0,
+      "discordant_baseline_only": 0,
+      "mcnemar_p_raw": 1.0,
+      "mrr_diff": 0.0016584888927314448,
+      "mrr_ci_low": -0.0007215339033260096,
+      "mrr_ci_high": 0.00431939813589001,
+      "cluster_ci_low": -0.0007184540193233672,
+      "cluster_ci_high": 0.004333667987289619,
+      "clusters": 74,
+      "mcnemar_p_holm": 1.0
+    },
+    "no_cost_gate": {
+      "discordant_full_only": 0,
+      "discordant_baseline_only": 0,
+      "mcnemar_p_raw": 1.0,
+      "mrr_diff": 0.0005881183785805428,
+      "mrr_ci_low": 0.00012913104400211428,
+      "mrr_ci_high": 0.0011525078600288544,
+      "cluster_ci_low": 2.3923444976076542e-05,
+      "cluster_ci_high": 0.0014143362680496966,
+      "clusters": 74,
+      "mcnemar_p_holm": 1.0
+    },
+    "full_budget": {
+      "discordant_full_only": 8,
+      "discordant_baseline_only": 2,
+      "mcnemar_p_raw": 0.109375,
+      "mrr_diff": 0.030582937963671297,
+      "mrr_ci_low": 0.012677490261874067,
+      "mrr_ci_high": 0.0502787080534008,
+      "cluster_ci_low": 0.01263716592908645,
+      "cluster_ci_high": 0.05155114509557037,
+      "clusters": 74,
+      "mcnemar_p_holm": 0.328125
+    },
+    "name_only": {
+      "discordant_full_only": 198,
+      "discordant_baseline_only": 4,
+      "mcnemar_p_raw": 2.1377785610795684e-53,
+      "mrr_diff": 0.58561102071455,
+      "mrr_ci_low": 0.5361765978695094,
+      "mrr_ci_high": 0.6331316734852603,
+      "cluster_ci_low": 0.5268233130606598,
+      "cluster_ci_high": 0.6414190632931928,
+      "clusters": 74,
+      "mcnemar_p_holm": 1.282667136647741e-52
+    },
+    "random": {
+      "discordant_full_only": 251,
+      "discordant_baseline_only": 2,
+      "mcnemar_p_raw": 4.439957888196715e-72,
+      "mrr_diff": 0.8483563311709008,
+      "mrr_ci_low": 0.8090612402775621,
+      "mrr_ci_high": 0.8863166282998934,
+      "cluster_ci_low": 0.798234302286278,
+      "cluster_ci_high": 0.8955012379856382,
+      "clusters": 74,
+      "mcnemar_p_holm": 3.1079705217377006e-71
+    }
+  },
+  "intervals": {
+    "full_cap_top1": {
+      "n": 298,
+      "hits": 253,
+      "p": 0.8489932885906041,
+      "ci_low": 0.8039150236653415,
+      "ci_high": 0.8851884573853445
+    },
+    "baseline_cap_top1": {
+      "n": 298,
+      "hits": 183,
+      "p": 0.6140939597315436,
+      "ci_low": 0.5577044526025456,
+      "ci_high": 0.6675793777409478
+    },
+    "full_on_topic": {
+      "n": 298,
+      "hits": 237,
+      "p": 0.7953020134228188,
+      "ci_low": 0.7458710706126269,
+      "ci_high": 0.8372164902764149
+    },
+    "baseline_on_topic": {
+      "n": 298,
+      "hits": 137,
+      "p": 0.4597315436241611,
+      "ci_low": 0.40401848874084856,
+      "ci_high": 0.5164695711379184
+    },
+    "full_strict_top1": {
+      "n": 63,
+      "hits": 25,
+      "p": 0.3968253968253968,
+      "ci_low": 0.2853191151670464,
+      "ci_high": 0.5201908149120896
+    },
+    "baseline_strict_top1": {
+      "n": 63,
+      "hits": 13,
+      "p": 0.20634920634920634,
+      "ci_low": 0.12475319613998359,
+      "ci_high": 0.32169814331601915
+    }
+  },
+  "oracle": {
+    "cases_with_a_provider": 297,
+    "cases_total": 298,
+    "coverage": 0.9966442953020134,
+    "expected_skill_absent_from_registry": 1,
+    "mean_providers_per_capability": 49.47945205479452,
+    "max_providers_for_a_capability": 839
+  },
+  "headroom": {
+    "oracle_cap_top1": 1.0,
+    "full_cap_top1": 0.8489932885906041,
+    "baseline_cap_top1": 0.6140939597315436
+  },
+  "half_significance": {
+    "dev": {
+      "n": 147,
+      "discordant_full_only": 44,
+      "discordant_baseline_only": 2,
+      "mcnemar_p": 3.0752289603697136e-11,
+      "mrr_diff": 0.2272559613884219,
+      "mrr_ci_low": 0.16290029496398253,
+      "mrr_ci_high": 0.2929274111122281,
+      "full_cap_top1": 0.9591836734693877,
+      "baseline_cap_top1": 0.673469387755102,
+      "full_strict_top1": 0.3870967741935484,
+      "baseline_strict_top1": 0.22580645161290322
+    },
+    "test": {
+      "n": 151,
+      "discordant_full_only": 36,
+      "discordant_baseline_only": 8,
+      "mcnemar_p": 2.5448598648836196e-05,
+      "mrr_diff": 0.17349714746995817,
+      "mrr_ci_low": 0.1093953730069123,
+      "mrr_ci_high": 0.23924545697352675,
+      "full_cap_top1": 0.7417218543046358,
+      "baseline_cap_top1": 0.5562913907284768,
+      "full_strict_top1": 0.40625,
+      "baseline_strict_top1": 0.1875
+    }
+  },
+  "halves": {
+    "dev": {
+      "n": 147,
+      "full_cap_top1": 0.9591836734693877,
+      "baseline_cap_top1": 0.673469387755102,
+      "full_strict_top1": 0.3870967741935484,
+      "baseline_strict_top1": 0.22580645161290322
+    },
+    "test": {
+      "n": 151,
+      "full_cap_top1": 0.7417218543046358,
+      "baseline_cap_top1": 0.5562913907284768,
+      "full_strict_top1": 0.40625,
+      "baseline_strict_top1": 0.1875
+    }
+  },
+  "frontier": [
+    {
+      "budget": 500,
+      "cap_top1": 0.8053691275167785,
+      "strict_top1": 0.20634920634920634,
+      "mean_cost": 1396.3758389261745,
+      "median_cost": 360
+    },
+    {
+      "budget": 1000,
+      "cap_top1": 0.825503355704698,
+      "strict_top1": 0.25396825396825395,
+      "mean_cost": 1149.1208053691275,
+      "median_cost": 734
+    },
+    {
+      "budget": 2000,
+      "cap_top1": 0.8288590604026845,
+      "strict_top1": 0.36507936507936506,
+      "mean_cost": 1402.234899328859,
+      "median_cost": 1011
+    },
+    {
+      "budget": 4000,
+      "cap_top1": 0.8456375838926175,
+      "strict_top1": 0.3968253968253968,
+      "mean_cost": 1890.9630872483222,
+      "median_cost": 1391
+    },
+    {
+      "budget": 8000,
+      "cap_top1": 0.8489932885906041,
+      "strict_top1": 0.38095238095238093,
+      "mean_cost": 2249.8120805369126,
+      "median_cost": 1507
+    },
+    {
+      "budget": "none",
+      "cap_top1": 0.8489932885906041,
+      "strict_top1": 0.3968253968253968,
+      "mean_cost": 2861.9161073825503,
+      "median_cost": 1550
+    }
+  ],
+  "errors": {
+    "by_category": {
+      "inference error: the request never named the capability": 42,
+      "ranking error: right capability was inferred but not ranked": 2,
+      "ranking error: right capability was in the top three": 1
+    },
+    "examples": {
+      "inference error: the request never named the capability": [
+        {
+          "id": "A004",
+          "request": "wire my calendar to a slack channel so meetings announce themselves",
+          "chosen": "meeting-insights-analyzer",
+          "expected_cap": "app-automation"
+        },
+        {
+          "id": "A007",
+          "request": "compare the top three cloud providers for a small team and tell me which fits",
+          "chosen": "cloudlayer-automation",
+          "expected_cap": "research"
+        },
+        {
+          "id": "A013",
+          "request": "what are the realistic risks of migrating off postgres",
+          "chosen": "Neon Automation",
+          "expected_cap": "research"
+        }
+      ],
+      "ranking error: right capability was inferred but not ranked": [
+        {
+          "id": "B076",
+          "request": "migrate the blog posts into the headless cms",
+          "chosen": "viral-linkedin-post",
+          "expected_cap": "content-cms"
+        },
+        {
+          "id": "B077",
+          "request": "write the article in the content pipeline format",
+          "chosen": "internal-comms",
+          "expected_cap": "content-cms"
+        }
+      ],
+      "ranking error: right capability was in the top three": [
+        {
+          "id": "B154",
+          "request": "find the file in my drive folder",
+          "chosen": "file-organizer",
+          "expected_cap": "integrations-drive"
+        }
+      ]
+    },
+    "total_failures": 45,
+    "by_capability": {
+      "code-review": {
+        "n": 4,
+        "inference": 4,
+        "ranking": 0,
+        "cases": 7,
+        "hits": 0
+      },
+      "architecture": {
+        "n": 3,
+        "inference": 3,
+        "ranking": 0,
+        "cases": 6,
+        "hits": 0
+      },
+      "integrations-docs": {
+        "n": 3,
+        "inference": 3,
+        "ranking": 0,
+        "cases": 3,
+        "hits": 0
+      },
+      "research": {
+        "n": 2,
+        "inference": 2,
+        "ranking": 0,
+        "cases": 9,
+        "hits": 0
+      },
+      "debugging": {
+        "n": 2,
+        "inference": 2,
+        "ranking": 0,
+        "cases": 7,
+        "hits": 0
+      },
+      "design-inspect": {
+        "n": 2,
+        "inference": 2,
+        "ranking": 0,
+        "cases": 3,
+        "hits": 0
+      },
+      "image-generation": {
+        "n": 2,
+        "inference": 2,
+        "ranking": 0,
+        "cases": 6,
+        "hits": 0
+      },
+      "analytics": {
+        "n": 2,
+        "inference": 2,
+        "ranking": 0,
+        "cases": 3,
+        "hits": 0
+      },
+      "content-cms": {
+        "n": 2,
+        "inference": 0,
+        "ranking": 2,
+        "cases": 3,
+        "hits": 0
+      },
+      "browser": {
+        "n": 2,
+        "inference": 2,
+        "ranking": 0,
+        "cases": 4,
+        "hits": 0
+      },
+      "cli-tooling": {
+        "n": 2,
+        "inference": 2,
+        "ranking": 0,
+        "cases": 4,
+        "hits": 0
+      },
+      "ci-delivery": {
+        "n": 2,
+        "inference": 2,
+        "ranking": 0,
+        "cases": 3,
+        "hits": 0
+      },
+      "app-automation": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 6,
+        "hits": 0
+      },
+      "planning": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 7,
+        "hits": 0
+      },
+      "writing": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 4,
+        "hits": 0
+      },
+      "design-direction": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 4,
+        "hits": 0
+      },
+      "video-audio": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 3,
+        "hits": 0
+      },
+      "auth": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 4,
+        "hits": 0
+      },
+      "concurrency": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 3,
+        "hits": 0
+      },
+      "observability": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 4,
+        "hits": 0
+      },
+      "orchestration": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 5,
+        "hits": 0
+      },
+      "memory": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 4,
+        "hits": 0
+      },
+      "integrations-drive": {
+        "n": 1,
+        "inference": 0,
+        "ranking": 1,
+        "cases": 3,
+        "hits": 0
+      },
+      "verification": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 2,
+        "hits": 0
+      },
+      "design-critique": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 2,
+        "hits": 0
+      },
+      "refactoring": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 8,
+        "hits": 0
+      },
+      "?": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 0,
+        "hits": 0
+      },
+      "response-style": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 5,
+        "hits": 0
+      },
+      "3d-graphics": {
+        "n": 1,
+        "inference": 1,
+        "ranking": 0,
+        "cases": 3,
+        "hits": 0
+      }
+    },
+    "strict_by_category": {
+      "right capability, sibling skill chosen": 27,
+      "wrong capability": 11
+    }
+  },
+  "robustness": {
+    "cases_with_a_matched_keyword": 232,
+    "capability_still_inferred": 43,
+    "capability_recall_after_drop": 0.1853448275862069,
+    "same_skill_still_chosen": 78,
+    "skill_survival_after_drop": 0.33620689655172414
+  }
+}

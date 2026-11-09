@@ -1,0 +1,82 @@
+{
+  "_comment": "Taxonomy repair proposals produced independently by a delegated agent (agy) from the dev-half diagnosis, as a cross-check on the author's own repair. These were NOT applied to the shipped taxonomy: the evaluation pipeline was frozen once the taxonomy ablation had been measured end to end, and applying a second batch would have invalidated every number in the paper. They are kept as the next iteration, and the harness supports applying them and re-measuring.",
+  "source": "agy, schema-enforced JSON, dev-half diagnosis only",
+  "duration_s": 751.34,
+  "proposals": [
+    {
+      "add_strong": [
+        "critique the structure",
+        "critique the code",
+        "code critique",
+        "critique this module",
+        "structural review",
+        "review this module"
+      ],
+      "add_weak": [
+        "critique",
+        "walkthrough",
+        "inspection",
+        "linter"
+      ],
+      "capability": "code-review",
+      "rationale": "Fixes requests like 'critique the structure of this module' by allowing code review to match natural phrasing around code critiques, structural reviews, and code inspections rather than strictly requiring 'diff' or 'review'."
+    },
+    {
+      "add_strong": [
+        "system architecture",
+        "software architecture",
+        "high level design",
+        "service boundaries",
+        "architectural decision",
+        "technical architecture"
+      ],
+      "add_weak": [
+        "microservice",
+        "subsystem",
+        "decomposition",
+        "topology",
+        "monorepo"
+      ],
+      "capability": "architecture",
+      "rationale": "Expands architecture vocabulary to cover standard architectural phrasing like 'system architecture', 'software architecture', and 'high level design', grounded in system design concepts without overfitting to noisy historical queries."
+    },
+    {
+      "add_strong": [
+        "content pipeline",
+        "blog posts",
+        "content model",
+        "cms integration",
+        "publish to cms",
+        "content repository"
+      ],
+      "add_weak": [
+        "strapi",
+        "contentful",
+        "sanity",
+        "wordpress",
+        "ghost"
+      ],
+      "capability": "content-cms",
+      "rationale": "Fixes 'migrate the blog posts into the headless cms' and 'write the article in the content pipeline format' by generalizing overly specific phrases like 'markdown content pipeline' and 'blog post authoring' to common phrases like 'content pipeline' and 'blog posts'."
+    },
+    {
+      "add_strong": [
+        "concise response",
+        "terse response",
+        "brief answers",
+        "talking style",
+        "response format",
+        "short responses"
+      ],
+      "add_weak": [
+        "concise",
+        "brevity",
+        "succinct",
+        "laconic",
+        "curt"
+      ],
+      "capability": "response-style",
+      "rationale": "Broadens response-style to recognize common user requests asking for concise or terse output such as 'concise response', 'brief answers', and 'succinct' without relying solely on 'caveman' or literal 'response tone'."
+    }
+  ]
+}
