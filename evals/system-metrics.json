@@ -1,0 +1,68 @@
+{
+  "measured_at": "2026-11-10",
+  "runtime_catalog": {
+    "before_gate": 1241,
+    "after_gate": 36,
+    "reduction_pct": 97.1,
+    "listing_tokens_now": 62121,
+    "listing_tokens_full_estimate": 1867228,
+    "listing_token_reduction_pct": 96.7,
+    "catalog_names_not_in_registry": [
+      "minimax-code-product"
+    ],
+    "note": "before_gate is the measured pre-gate catalog. listing_tokens_full_estimate is the summed on-invoke cost of every local and plugin skill, used as the pre-gate listing cost proxy; the exact pre-gate listing was not tokenised at the time."
+  },
+  "registry": {
+    "local": 1120,
+    "plugin": 318,
+    "marketplace": 2780,
+    "total": 4218
+  },
+  "taxonomy": {
+    "capabilities": 78,
+    "capabilities_before": 51,
+    "unroutable_now": 0,
+    "unroutable_before": 845,
+    "stale_tags_now": 0,
+    "stale_tags_before": 78,
+    "repair": {
+      "note": "The taxonomy's keyword lists were repaired after an error analysis on the dev half of the benchmark. The test half was not consulted. evals/taxonomy-v1.json holds the pre-repair set and evals/taxonomy-ablation.md holds the ablation.",
+      "cap_top1_before": 0.661,
+      "cap_top1_after": 0.849,
+      "mcnemar_p": 1.72e-14,
+      "discordant_repaired_only": 59,
+      "discordant_original_only": 3
+    }
+  },
+  "parking": {
+    "installed_in_data_dir": 18,
+    "parked": 260,
+    "on_disk_external_roots": 1076,
+    "note": "The 1,076 directories under ~/.agents/skills are invisible to mcode (external roots gated off) and are the router's local library."
+  },
+  "learning": {
+    "sessions_scanned": 304,
+    "transcripts": 304,
+    "user_messages": 757,
+    "skill_invocations": 67,
+    "skills_scored_by_batch_learner": 19,
+    "clean_historical_pairs": 5
+  },
+  "evaluation": {
+    "cases_total": 298,
+    "cases_authored": 293,
+    "cases_historical": 5,
+    "strict_cases": 63,
+    "lexically_isolated_cases": 126,
+    "systems": [
+      "random",
+      "name_only",
+      "bm25",
+      "keyword_substring",
+      "no_ledger",
+      "no_cost_gate",
+      "full_budget",
+      "full"
+    ]
+  }
+}
