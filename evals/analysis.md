@@ -10,13 +10,13 @@ The first interval resamples cases; the second resamples capabilities, which is 
 
 | baseline | full only right | baseline only right | MRR diff | 95% CI (cases) | 95% CI (clusters) | McNemar p (raw) | p (Holm) |
 |---|---|---|---|---|---|---|---|
-| random | 251 | 2 | +0.848 | [0.809, 0.886] | [0.798, 0.896] | 4.4e-72 | 3.1e-71 |
-| name_only | 198 | 4 | +0.586 | [0.536, 0.633] | [0.527, 0.641] | 2.1e-53 | 1.3e-52 |
-| bm25 | 118 | 7 | +0.308 | [0.259, 0.356] | [0.240, 0.375] | 4e-27 | 2e-26 |
-| keyword_substring | 80 | 10 | +0.200 | [0.155, 0.247] | [0.133, 0.271] | 1.1e-14 | 4.2e-14 |
-| full_budget | 8 | 2 | +0.031 | [0.013, 0.050] | [0.013, 0.052] | 0.11 | 0.33 |
+| random | 250 | 0 | +0.856 | [0.820, 0.891] | [0.815, 0.896] | 1.1e-75 | 7.7e-75 |
+| name_only | 198 | 4 | +0.585 | [0.536, 0.633] | [0.527, 0.641] | 2.1e-53 | 1.3e-52 |
+| bm25 | 119 | 7 | +0.308 | [0.259, 0.356] | [0.241, 0.374] | 2.1e-27 | 1.1e-26 |
+| keyword_substring | 80 | 10 | +0.200 | [0.155, 0.247] | [0.133, 0.270] | 1.1e-14 | 4.2e-14 |
+| full_budget | 8 | 2 | +0.030 | [0.013, 0.050] | [0.012, 0.051] | 0.11 | 0.33 |
 | no_ledger | 0 | 0 | +0.002 | [-0.001, 0.004] | [-0.001, 0.004] | 1 | 1 |
-| no_cost_gate | 0 | 0 | +0.001 | [0.000, 0.001] | [0.000, 0.001] | 1 | 1 |
+| no_cost_gate | 0 | 0 | +0.000 | [-0.001, 0.001] | [-0.001, 0.001] | 1 | 1 |
 
 ## 2. Intervals on the headline numbers
 
@@ -24,7 +24,7 @@ The first interval resamples cases; the second resamples capabilities, which is 
 |---|---|---|---|
 | full_cap_top1 | 298 | 0.849 | [0.804, 0.885] |
 | baseline_cap_top1 | 298 | 0.614 | [0.558, 0.668] |
-| full_on_topic | 298 | 0.795 | [0.746, 0.837] |
+| full_on_topic | 298 | 0.799 | [0.749, 0.840] |
 | baseline_on_topic | 298 | 0.460 | [0.404, 0.516] |
 | full_strict_top1 | 63 | 0.397 | [0.285, 0.520] |
 | baseline_strict_top1 | 63 | 0.206 | [0.125, 0.322] |
@@ -33,7 +33,7 @@ The first interval resamples cases; the second resamples capabilities, which is 
 
 - Cases with at least one skill carrying the expected capability: **297 / 298** (0.997).
 - Expected skill present in the registry: 1 cases absent.
-- Mean providers per capability: 49.5, worst case 839 skills.
+- Mean providers per capability: 49.8, worst case 839 skills.
 - Ranking headroom: shipped router 0.849, pre-fix matcher 0.614, perfect ranker 1.000.
 
 ## 4. A split the design was not tuned on
@@ -60,8 +60,8 @@ Significance inside each half. The taxonomy repair was driven by the dev half al
 | 1000 | 0.826 | 0.254 | 1,149 | 734 |
 | 2000 | 0.829 | 0.365 | 1,402 | 1,011 |
 | 4000 | 0.846 | 0.397 | 1,891 | 1,391 |
-| 8000 | 0.849 | 0.381 | 2,250 | 1,507 |
-| none | 0.849 | 0.397 | 2,862 | 1,550 |
+| 8000 | 0.849 | 0.381 | 2,268 | 1,518 |
+| none | 0.849 | 0.397 | 2,881 | 1,550 |
 
 ## 6. Error analysis
 
@@ -121,11 +121,41 @@ Strict-subset failures:
 
 - `find the file in my drive folder` -> chose `file-organizer` (expected capability `integrations-drive`)
 
-## 7. Robustness to a missing keyword
+## 7. The lexically isolated subset
+
+A case is lexically isolated when its request shares no exact keyword string with the expected capability's keyword lists. Which cases qualify depends on the lists used to define it, so both are measured. Every system is scored on the same subset.
+
+### Isolated by the shipped taxonomy keyword lists (66 cases)
+
+| system | top-1 | top-3 |
+|---|---|---|
+| full | 0.364 | 0.545 |
+| keyword_substring | 0.273 | 0.379 |
+| bm25 | 0.273 | 0.348 |
+| no_ledger | 0.364 | 0.530 |
+| no_cost_gate | 0.364 | 0.545 |
+| full_budget | 0.288 | 0.424 |
+| name_only | 0.182 | 0.288 |
+| random | 0.015 | 0.015 |
+
+### Isolated by the pre repair taxonomy keyword lists (126 cases)
+
+| system | top-1 | top-3 |
+|---|---|---|
+| full | 0.659 | 0.762 |
+| keyword_substring | 0.444 | 0.540 |
+| bm25 | 0.349 | 0.468 |
+| no_ledger | 0.659 | 0.754 |
+| no_cost_gate | 0.659 | 0.762 |
+| full_budget | 0.627 | 0.698 |
+| name_only | 0.159 | 0.254 |
+| random | 0.008 | 0.040 |
+
+## 8. Robustness to a missing keyword
 
 The strongest matching keyword is deleted from the request and the request is routed again.
 
 - Cases with a matched keyword: 232
 - Expected capability still inferred: 43 (0.185)
-- Same skill still chosen: 78 (0.336)
+- Same skill still chosen: 79 (0.341)
 

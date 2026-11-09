@@ -1,22 +1,22 @@
 {
   "measured_at": "2026-11-10",
   "runtime_catalog": {
-    "before_gate": 1241,
-    "after_gate": 36,
-    "reduction_pct": 97.1,
-    "listing_tokens_now": 62121,
-    "listing_tokens_full_estimate": 1867228,
-    "listing_token_reduction_pct": 96.7,
+    "before_gate": 1387,
+    "after_gate": 44,
+    "reduction_pct": 96.8,
+    "listing_tokens_now": 89205,
+    "listing_tokens_full_estimate": 1922567,
+    "listing_token_reduction_pct": 95.4,
     "catalog_names_not_in_registry": [
       "minimax-code-product"
     ],
-    "note": "before_gate is the measured pre-gate catalog. listing_tokens_full_estimate is the summed on-invoke cost of every local and plugin skill, used as the pre-gate listing cost proxy; the exact pre-gate listing was not tokenised at the time."
+    "note": "before_gate is the host scan of every skill root the host reads, counted by SKILL.md presence: .minimax/skills, .minimax/.builtin-skills and the three external roots. after_gate is the measured runtime catalog listing after the external roots were gated off and the data-directory skills were parked. listing_tokens_now is the summed on-invoke cost of the visible skills that are in the registry; listing_tokens_full_estimate is the summed on-invoke cost of every local and plugin skill, used as the pre-gate listing cost proxy; the exact pre-gate listing was not tokenised at the time."
   },
   "registry": {
-    "local": 1120,
+    "local": 1127,
     "plugin": 318,
     "marketplace": 2780,
-    "total": 4218
+    "total": 4225
   },
   "taxonomy": {
     "capabilities": 78,
@@ -29,16 +29,16 @@
       "note": "The taxonomy's keyword lists were repaired after an error analysis on the dev half of the benchmark. The test half was not consulted. evals/taxonomy-v1.json holds the pre-repair set and evals/taxonomy-ablation.md holds the ablation.",
       "cap_top1_before": 0.661,
       "cap_top1_after": 0.849,
-      "mcnemar_p": 1.72e-14,
-      "discordant_repaired_only": 59,
-      "discordant_original_only": 3
+      "mcnemar_p": 3.1762786845135338e-15,
+      "discordant_repaired_only": 58,
+      "discordant_original_only": 2
     }
   },
   "parking": {
-    "installed_in_data_dir": 18,
+    "installed_in_data_dir": 26,
     "parked": 260,
-    "on_disk_external_roots": 1076,
-    "note": "The 1,076 directories under ~/.agents/skills are invisible to mcode (external roots gated off) and are the router's local library."
+    "on_disk_external_roots": 1343,
+    "note": "The 1,343 skills under ~/.agents/skills, ~/.claude/skills and ~/.codex/skills are invisible to mcode (external roots gated off) and are the router's local library."
   },
   "learning": {
     "sessions_scanned": 304,

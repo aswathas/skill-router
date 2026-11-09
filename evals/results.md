@@ -1,19 +1,19 @@
 # Evaluation results
 
-Case counts: 293 authored, 5 historical. Registry: 1120 local, 318 plugin, 2780 marketplace. Capabilities: 78.
+Case counts: 293 authored, 5 historical. Registry: 1127 local, 318 plugin, 2780 marketplace. Capabilities: 78.
 
 ## Headline
 
 | system | cap top-1 | cap top-3 | MRR | strict top-1 | on-topic | mean tokens | median tokens |
 |---|---|---|---|---|---|---|---|
-| random | 0.013 | 0.054 | 0.030 | 0.000 | 0.040 | 2420 | 1585 |
+| random | 0.010 | 0.040 | 0.022 | 0.000 | 0.050 | 2153 | 1294 |
 | name_only | 0.198 | 0.332 | 0.292 | 0.127 | 0.248 | 703 | 336 |
-| bm25 | 0.477 | 0.624 | 0.570 | 0.397 | 0.564 | 1898 | 1215 |
+| bm25 | 0.473 | 0.631 | 0.570 | 0.397 | 0.560 | 1898 | 1215 |
 | keyword_substring | 0.614 | 0.708 | 0.678 | 0.206 | 0.460 | 592 | 214 |
-| no_ledger | 0.849 | 0.889 | 0.876 | 0.413 | 0.799 | 2782 | 1539 |
-| no_cost_gate | 0.849 | 0.893 | 0.877 | 0.397 | 0.792 | 3096 | 1608 |
+| no_ledger | 0.849 | 0.889 | 0.876 | 0.413 | 0.802 | 2801 | 1539 |
+| no_cost_gate | 0.849 | 0.893 | 0.878 | 0.397 | 0.795 | 3114 | 1683 |
 | full_budget | 0.829 | 0.859 | 0.847 | 0.365 | 0.711 | 1402 | 1011 |
-| full | 0.849 | 0.893 | 0.878 | 0.397 | 0.795 | 2862 | 1550 |
+| full | 0.849 | 0.893 | 0.878 | 0.397 | 0.799 | 2881 | 1550 |
 
 ## Lexically isolated subset
 
@@ -21,7 +21,7 @@ Cases where the request shares no exact keyword string with the expected capabil
 
 | system | n | top-1 | top-3 |
 |---|---|---|---|
-| random | 66 | 0.030 | 0.076 |
+| random | 66 | 0.015 | 0.015 |
 | name_only | 66 | 0.182 | 0.288 |
 | bm25 | 66 | 0.273 | 0.348 |
 | keyword_substring | 66 | 0.273 | 0.379 |

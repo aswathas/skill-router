@@ -457,6 +457,45 @@ def analyse(inv, reg, cap_map, cases, n_boot):
         "same_skill_still_chosen": survived,
         "skill_survival_after_drop": (survived / dropped) if dropped else 0.0,
     }
+
+    # The lexically isolated subset. Which cases it contains depends on the
+    # keyword lists used to define it, so we measure both: the shipped
+    # taxonomy's lists, and the pre-repair lists, which are a fixed
+    # reference independent of the current system. Every system is scored
+    # on the same subset, so the comparison stays apples-to-apples.
+    def iso_ids(cmap):
+        ids = set()
+        for c in cases:
+            low = c["request"].lower()
+            spec = cmap.get(c.get("cap")) or {}
+            kws = ([k.lower() for k in (spec.get("strong") or [])]
+                   + [k.lower() for k in (spec.get("weak") or [])])
+            if not any(k in low for k in kws):
+                ids.add(c.get("id"))
+        return ids
+
+    v1_path = Path(__file__).resolve().parent / "taxonomy-v1.json"
+    pre_repair_map = {}
+    if v1_path.is_file():
+        pre_repair_map = json.loads(v1_path.read_text(encoding="utf-8")).get(
+            "capabilities", {})
+    iso = {}
+    for label, cmap in (("shipped_taxonomy", cap_map),
+                         ("pre_repair_taxonomy", pre_repair_map)):
+        if not cmap:
+            continue
+        ids = iso_ids(cmap)
+        entry = {"n": len(ids), "systems": {}}
+        for s in systems:
+            sub = [r for r in rows[s] if r.get("id") in ids]
+            if not sub:
+                continue
+            entry["systems"][s] = {
+                "cap_top1": sum(1 for r in sub if r["cap_top1"]) / len(sub),
+                "cap_top3": sum(1 for r in sub if r["cap_top3"]) / len(sub),
+            }
+        iso[label] = entry
+    out["isolation"] = iso
     return out
 
 
@@ -581,8 +620,25 @@ def to_markdown(a):
                      + str(ex["expected_cap"]) + BT + ")")
         L.append("")
 
+    iso = a.get("isolation", {})
+    if iso:
+        L += ["## 7. The lexically isolated subset", "",
+              "A case is lexically isolated when its request shares no exact "
+              "keyword string with the expected capability's keyword lists. Which "
+              "cases qualify depends on the lists used to define it, so both are "
+              "measured. Every system is scored on the same subset.", ""]
+        for label, entry in iso.items():
+            L.append("### Isolated by the %s keyword lists (%d cases)"
+                     % (label.replace("_", " "), entry["n"]))
+            L.append("")
+            L += ["| system | top-1 | top-3 |", "|---|---|---|"]
+            for s, v in entry["systems"].items():
+                L.append("| %s | %.3f | %.3f |"
+                         % (s, v["cap_top1"], v["cap_top3"]))
+            L.append("")
+
     rb = a["robustness"]
-    L += ["## 7. Robustness to a missing keyword", "",
+    L += ["## 8. Robustness to a missing keyword", "",
           "The strongest matching keyword is deleted from the request and the "
           "request is routed again.", "",
           "- Cases with a matched keyword: %d" % rb["cases_with_a_matched_keyword"],
