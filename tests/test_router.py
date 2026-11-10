@@ -397,6 +397,74 @@ class TestPaperNumbersMatchTheArtefacts(unittest.TestCase):
 
 
 
+class TestIteration3(unittest.TestCase):
+    """The paper's iteration-3 claim must match the measured artefact."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tex = (ROOT / "paper" / "skill-router.tex").read_text(encoding="utf-8")
+        cls.iter3 = json.loads((ROOT / "evals" / "iteration3.json")
+                               .read_text(encoding="utf-8"))
+
+    def test_the_flipped_case_count_is_quoted(self):
+        flips = self.iter3["flipped_cases"]
+        overall = [s for s in self.iter3["splits"]
+                    if s["split"] == "overall"][0]
+        self.assertEqual(len(flips),
+                         overall["discordant_proposed_only"]
+                         + overall["discordant_shipped_only"])
+        words = {2: "two", 3: "three", 4: "four"}
+        count = len(flips)
+        forms = [f"{count} of {overall['n']} cases"]
+        if count in words:
+            forms.append(f"{words[count]} of {overall['n']} cases")
+        self.assertTrue(any(f in self.tex for f in forms),
+                        f"the flipped-case count {count} is not quoted in the paper")
+
+    def test_the_shipped_taxonomy_was_not_changed(self):
+        """Iteration 3 must not have been adopted into the shipped taxonomy."""
+        shipped = json.loads((ROOT / "skills" / "aswath-capability" / "registry"
+                              / "capabilities.json").read_text(encoding="utf-8"))
+        proposals = json.loads((ROOT / "evals" / "agent-repair-proposals.json")
+                               .read_text(encoding="utf-8"))["proposals"]
+        for p in proposals:
+            spec = shipped["capabilities"][p["capability"]]
+            for kw in p.get("add_strong") or []:
+                self.assertNotIn(kw, spec.get("strong") or [],
+                                 f"iteration 3 leaked {kw!r} into the shipped taxonomy")
+            for kw in p.get("add_weak") or []:
+                self.assertNotIn(kw, spec.get("weak") or [],
+                                 f"iteration 3 leaked {kw!r} into the shipped taxonomy")
+
+
+class TestEvaluationGuideMatchesTheArtefacts(unittest.TestCase):
+    """The evaluation guide's tables must quote the measured numbers."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.doc = (ROOT / "docs" / "EVALUATION.md").read_text(encoding="utf-8")
+        cls.ablation = json.loads((ROOT / "evals" / "taxonomy-ablation.json")
+                                  .read_text(encoding="utf-8"))
+
+    def _row(self, label):
+        for line in self.doc.splitlines():
+            if line.startswith("| " + label):
+                return [c.strip().replace("*", "")
+                        for c in line.strip("|").split("|")]
+        self.fail(f"no table row for {label}")
+
+    def test_the_ablation_table_rows_match(self):
+        for label, key in (("v1, before the repair", "v1_original_taxonomy"),
+                           ("v2, after the repair", "v2_repaired_taxonomy")):
+            v = self.ablation[key]
+            cells = self._row(label)
+            self.assertEqual(cells[1], f"{v['cap_top1']:.3f}")
+            self.assertEqual(cells[2], f"{v['strict_top1']:.3f}")
+            self.assertEqual(cells[3], f"{v['mrr']:.3f}")
+            self.assertEqual(cells[4], f"{v['on_topic']:.3f}")
+            self.assertEqual(cells[5], f"{v['mean_cost']:,.0f}")
+
+
 class TestPlainLanguageGuide(unittest.TestCase):
     """The guide for a general reader must not drift from the measurements."""
 

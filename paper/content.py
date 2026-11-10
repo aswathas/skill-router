@@ -429,7 +429,16 @@ S("Conclusion",
   "accuracy and token cost pull against each other. Each is a statement "
   "about the evidence available at this scale rather than about the design, "
   "and all three point at the same next step: a larger, human-judged "
-  "evaluation.")
+  "evaluation.",
+
+  "One further check supports the diagnosis. We handed the dev-half failure "
+  "analysis to an independent agent and asked it for keyword repairs, and "
+  "it independently concluded that the missing thing was vocabulary rather "
+  "than ranking, and proposed repairs for four capabilities. Applied to the "
+  "shipped system they fixed two of 298 cases and broke none, which "
+  "replicates the finding without clearing the bar of significance: we "
+  "report the proposal as the next measured iteration rather than adopting "
+  "it, and the shipped taxonomy is unchanged.")
 
 # ---------------------------------------------------------------------------
 # The results tables are derived from the evaluation artefacts, so the paper

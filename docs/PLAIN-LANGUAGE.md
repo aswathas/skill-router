@@ -189,6 +189,12 @@ The obvious step is a bigger, human-judged evaluation. The second is a
 smaller, sharper vocabulary that says what it is for and nothing more. Both
 are in the [paper](../paper/skill-router.pdf).
 
+We also handed the failure analysis to a separate program and asked it to fix
+the word list. It reached the same conclusion we did, on its own: the wording
+was missing, not the matching. Its fix changed 2 of 298 test cases and broke
+none. That is too small to be proof, so we kept it as a recorded next step
+instead of shipping it. See [iteration3](../evals/iteration3.md).
+
 Everything here is reproducible: the test set, the scoring code, the
 statistics, and the paper's tables are all in this repository, and the
 commands to re-run them are in [REPRODUCE.md](REPRODUCE.md).

@@ -1,0 +1,63 @@
+{
+  "_comment": "Iteration 3: the independent agent's dev-half proposals, applied to the shipped taxonomy in a throwaway state directory and measured against the shipped system. The shipped taxonomy is NOT changed by this script.",
+  "capabilities_changed": [
+    "architecture",
+    "code-review",
+    "content-cms",
+    "response-style"
+  ],
+  "splits": [
+    {
+      "split": "overall",
+      "n": 298,
+      "shipped_cap_top1": 0.8489932885906041,
+      "proposed_cap_top1": 0.8557046979865772,
+      "discordant_proposed_only": 2,
+      "discordant_shipped_only": 0,
+      "mcnemar_p": 0.5,
+      "mrr_diff": 0.0054569818136330096,
+      "mrr_ci_low": -5.3788404594060214e-05,
+      "mrr_ci_high": 0.014165108158049248
+    },
+    {
+      "split": "dev",
+      "n": 147,
+      "shipped_cap_top1": 0.9591836734693877,
+      "proposed_cap_top1": 0.9659863945578231,
+      "discordant_proposed_only": 1,
+      "discordant_shipped_only": 0,
+      "mcnemar_p": 1.0,
+      "mrr_diff": 0.006334733242476392,
+      "mrr_ci_low": -0.00033327847267939427,
+      "mrr_ci_high": 0.01933747820010857
+    },
+    {
+      "split": "test",
+      "n": 151,
+      "shipped_cap_top1": 0.7417218543046358,
+      "proposed_cap_top1": 0.7483443708609272,
+      "discordant_proposed_only": 1,
+      "discordant_shipped_only": 0,
+      "mcnemar_p": 1.0,
+      "mrr_diff": 0.004602482078268922,
+      "mrr_ci_low": -5.427151888202607e-05,
+      "mrr_ci_high": 0.01369338461093226
+    }
+  ],
+  "flipped_cases": [
+    {
+      "id": "A023",
+      "request": "critique the structure of this module",
+      "shipped_chosen": "21st-ui-build",
+      "proposed_chosen": "egm-review",
+      "split": "dev"
+    },
+    {
+      "id": "B180",
+      "request": "prove it works before we call it done",
+      "shipped_chosen": "mcode-tools-master",
+      "proposed_chosen": "verification-before-completion",
+      "split": "test"
+    }
+  ]
+}

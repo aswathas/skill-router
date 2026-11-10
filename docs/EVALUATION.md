@@ -120,7 +120,7 @@ been tagged before.
 
 | taxonomy | cap top-1 | strict top-1 | MRR | on-topic | mean cost |
 |---|---|---|---|---|---|
-| v1, before the repair | 0.661 | 0.397 | 0.712 | 0.802 | 2,434 |
+| v1, before the repair | 0.661 | 0.381 | 0.714 | 0.805 | 2,587 |
 | v2, after the repair | **0.849** | 0.397 | **0.878** | 0.799 | 2,881 |
 
 Paired: the repaired taxonomy is right where the original is wrong on **59**

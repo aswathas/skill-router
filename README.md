@@ -234,6 +234,9 @@ paper/                content.py (single source), build.py, build_pdf.py,
                       skill-router.tex, skill-router.pdf
 config/               config.sample.yaml
 docs/                 plain-language guide, architecture, evaluation, reproduction
+evals/                benchmark-a/b/c.jsonl, historical.jsonl, run_eval.py,
+                      analysis.py, taxonomy_ablation.py, iteration3.py,
+                      results.json, results.md, system-metrics.json
 ~~~
 
 ---
