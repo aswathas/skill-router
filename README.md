@@ -9,6 +9,9 @@ paper that measures whether it works.
 
 It was built and measured on one machine with **4,225 installed skills**.
 
+> **New to this?** Start with [What we built, in plain language](docs/PLAIN-LANGUAGE.md)
+> — no jargon, the problem, the four parts, a worked example and what we found.
+
 | | before | after |
 |---|---|---|
 | skills visible to the agent | 1,387 | **44** (−96.8%) |
@@ -230,7 +233,7 @@ evals/                benchmark-a/b/c.jsonl, historical.jsonl, run_eval.py,
 paper/                content.py (single source), build.py, build_pdf.py,
                       skill-router.tex, skill-router.pdf
 config/               config.sample.yaml
-docs/                 architecture, evaluation, reproduction notes
+docs/                 plain-language guide, architecture, evaluation, reproduction
 ~~~
 
 ---

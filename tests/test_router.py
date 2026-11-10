@@ -396,5 +396,55 @@ class TestPaperNumbersMatchTheArtefacts(unittest.TestCase):
                           f"the isolated subset size {entry['n']} is not quoted")
 
 
+
+class TestPlainLanguageGuide(unittest.TestCase):
+    """The guide for a general reader must not drift from the measurements."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.guide = (ROOT / "docs" / "PLAIN-LANGUAGE.md").read_text(encoding="utf-8")
+        cls.results = json.loads((ROOT / "evals" / "results.json")
+                                 .read_text(encoding="utf-8"))
+        cls.analysis = json.loads((ROOT / "evals" / "analysis.json")
+                                  .read_text(encoding="utf-8"))
+        cls.metrics = json.loads((ROOT / "evals" / "system-metrics.json")
+                                 .read_text(encoding="utf-8"))
+
+    def test_the_headline_accuracies_are_quoted(self):
+        systems = self.results["systems"]
+        for key in ("full", "keyword_substring", "bm25", "random"):
+            value = systems[key]["cap_top1"]
+            self.assertIn(f"{value * 100:.0f}%", self.guide,
+                          f"{key} capability accuracy {value:.3f} is not quoted")
+
+    def test_the_exact_skill_accuracies_are_quoted(self):
+        systems = self.results["systems"]
+        for key in ("full", "keyword_substring", "bm25"):
+            value = systems[key].get("strict_top1", 0.0)
+            self.assertIn(f"{value * 100:.0f}%", self.guide,
+                          f"{key} strict accuracy {value:.3f} is not quoted")
+
+    def test_the_catalog_numbers_are_quoted(self):
+        cat = self.metrics["runtime_catalog"]
+        self.assertIn(f"{cat['before_gate']:,}", self.guide)
+        self.assertIn(str(cat["after_gate"]), self.guide)
+
+    def test_the_case_count_is_quoted(self):
+        self.assertIn(str(self.analysis["n_cases"]), self.guide)
+
+    def test_the_taxonomy_ablation_is_quoted(self):
+        ablation = json.loads((ROOT / "evals" / "taxonomy-ablation.json")
+                              .read_text(encoding="utf-8"))
+        before = ablation["v1_original_taxonomy"]["cap_top1"]
+        after = ablation["v2_repaired_taxonomy"]["cap_top1"]
+        self.assertIn(f"{before * 100:.0f}%", self.guide)
+        self.assertIn(f"{after * 100:.0f}%", self.guide)
+
+    def test_the_held_out_half_is_quoted(self):
+        halves = self.analysis["halves"]
+        self.assertIn(f"{halves['dev']['full_cap_top1'] * 100:.0f}%", self.guide)
+        self.assertIn(f"{halves['test']['full_cap_top1'] * 100:.0f}%", self.guide)
+
+
 if __name__ == "__main__":
     unittest.main()
