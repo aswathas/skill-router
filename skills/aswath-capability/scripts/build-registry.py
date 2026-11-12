@@ -537,6 +537,19 @@ def main():
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(registry, indent=1, ensure_ascii=False), encoding="utf-8")
 
+    # CAPABILITY_PUBLISH: the auditor loads capabilities.json and ledger.json
+    # from the same shared state dir. Without them it reads an empty taxonomy
+    # and reports every tag as unsupported (781 phantom stale tags).
+    _skill_root = home / ".claude" / SKILL_DIR_NAME / "aswath-capability" / "registry"
+    for _name in ("capabilities.json", "ledger.json"):
+        _src = _skill_root / _name
+        _dst = out_path.parent / _name
+        if _src.is_file() and (not _dst.is_file() or _name == "capabilities.json"):
+            try:
+                _dst.write_text(_src.read_text(encoding="utf-8"), encoding="utf-8")
+            except OSError:
+                pass
+
     if not args.quiet:
         c = registry["counts"]
         print(f"registry -> {out_path}")

@@ -1,0 +1,104 @@
+{
+  "name": "ui-design",
+  "version": "1.0.0",
+  "description": "End-to-end UI design for a page or app screen. Brainstorms the visual direction, gathers references from the user or a curated template library, composes a token system, builds it, inspects it in a real browser, roasts it with parallel critics, fixes what they find, and reports the cost.",
+  "applies_to": ["landing-page", "marketing-site", "portfolio", "product-page", "app-screen", "dashboard", "onboarding", "settings", "empty-state"],
+  "token_budget": 60000,
+  "phases": [
+    {
+      "id": "frame",
+      "goal": "Establish what the page is for, who it is for, and what a good version of it looks like - before any pixel is chosen.",
+      "skills": ["brainstorming", "design-is", "ui-skills-root"],
+      "inputs": ["the brief", "existing site context if any"],
+      "outputs": ["a one-sentence design direction", "the user it serves", "the job it must do", "anti-goals"],
+      "gate": "The direction is written down and the user has confirmed it. A direction nobody can repeat back is not a direction.",
+      "notes": "design-is audits against Rams' principles and hands off to make-plan for one of new / refine / redesign. Use it when the brief is fuzzy about taste, not when it is clear."
+    },
+    {
+      "id": "references",
+      "goal": "Lock the visual language by combining what the user already loves with what the template library can offer.",
+      "skills": ["design-taste-frontend"],
+      "inputs": ["the direction sentence", "user-supplied references (URLs, screenshots, brand assets, competitor pages)"],
+      "outputs": ["palette", "type pairing", "layout archetype", "motion character", "imagery direction", "section blueprint list"],
+      "gate": "Palette, type and layout archetype are chosen and locked.",
+      "two_paths": {
+        "user_has_references": "Read them. Extract the actual rules: what colours, what type, what density, what spacing rhythm. Write the rules down as tokens, not as vibes.",
+        "user_has_no_references": "Offer CHOICES, never a blank page. The library under design-taste-frontend/library/ holds researched directions (directions.json), palettes.json, type.json, sections.json, heroes.json, motions.json, motifs (tells.json). Pick 3-4 internally consistent combinations and present them with previews - palette swatches, type specimens, and the section blueprint - so the user picks with their eyes, not with adjectives."
+      },
+      "notes": "Never present one option. Three to four, side by side, each internally consistent. If the user says 'whatever', pick the one that best fits the stated audience and say why."
+    },
+    {
+      "id": "compose",
+      "goal": "Turn the chosen direction into a token system and layout rules that every later screen obeys.",
+      "skills": ["impeccable", "frontend-design", "theme-factory", "create-design-md"],
+      "inputs": ["locked palette", "locked type", "layout archetype"],
+      "outputs": ["colour tokens with roles, not raw hex", "type scale with roles", "spacing scale", "radius and elevation rules", "motion tokens with durations and easing"],
+      "gate": "Tokens are written to a file that the build phase imports, not to a doc that describes them.",
+      "notes": "design-taste-frontend/library/app.css and base.css are a working token example - read them before inventing your own."
+    },
+    {
+      "id": "build",
+      "goal": "Implement the page so it honours the tokens.",
+      "skills": ["vercel-react-best-practices", "web-artifacts-builder", "impeccable", "baseline-ui"],
+      "inputs": ["token file", "section blueprint list", "stack in use"],
+      "outputs": ["working page in the project", "responsive across mobile / tablet / desktop", "keyboard and screen-reader sensible"],
+      "gate": "The page renders. Then the next phase proves it looks right.",
+      "notes": "impeccable's own reference files (layout.md, colorize.md, animate.md, harden.md, craft.md) are the per-task references. Read the one you need, not the whole set."
+    },
+    {
+      "id": "inspect",
+      "goal": "Look at the actual rendered result with real eyes, in a real browser.",
+      "skills": ["design-taste-frontend", "webapp-testing", "impeccable", "fixing-accessibility", "fixing-metadata", "fixing-motion-performance"],
+      "inputs": ["the built page"],
+      "outputs": ["screenshots at 3 breakpoints", "lint results", "contrast and hit-target findings"],
+      "gate": "You have actually looked at a screenshot. Reasoning about how it probably looks is not inspection.",
+      "how": "design-taste-frontend/scripts/inspect.mjs renders and captures; lint.mjs enforces the house style. Both are the reason this skillset can catch slop that a code review cannot.",
+      "notes": "This phase is the single highest-value phase in the skillset. Skipping it is how pages ship looking generic."
+    },
+    {
+      "id": "roast",
+      "goal": "Find what is actually wrong, from three different angles at once.",
+      "skills": ["impeccable", "design-taste-frontend", "caveman-review", "improve-ui"],
+      "inputs": ["screenshots", "the source"],
+      "outputs": ["ranked findings: severity, location, the specific problem, the fix"],
+      "gate": "Every finding is actionable. 'Looks generic' is not a finding; 'the hero headline uses the templated centred-hero pattern that appears in 90% of the corpus' is.",
+      "how": "Spawn 2-3 critics in parallel, each with one lens: visual taste, accessibility and correctness, and would-a-user-want-this. Use workflows/roast-and-fix.workflow.js to automate the loop.",
+      "notes": "impeccable/critique.md is the deepest single reference here (47.8K). Read it when the visual findings are hard to see."
+    },
+    {
+      "id": "fix",
+      "goal": "Apply the findings that are worth fixing, then prove the fixes worked.",
+      "skills": ["impeccable", "design-taste-frontend"],
+      "inputs": ["ranked findings"],
+      "outputs": ["the page with fixes applied", "fresh screenshots after fixing", "a list of findings deliberately not fixed, with reasons"],
+      "gate": "Re-inspected after fixing. A fix that was not re-checked is not a fix.",
+      "notes": "Expect 2-3 iterations. One pass rarely clears a roast."
+    },
+    {
+      "id": "efficiency",
+      "goal": "Report what the page cost to produce and what it will cost to load.",
+      "skills": ["agent-cost-report", "caveman-stats"],
+      "inputs": ["the whole run"],
+      "outputs": ["tokens spent per phase", "skills invoked per phase", "bundle size and load cost", "the most expensive single step"],
+      "gate": "Reported. A cost number nobody saw cannot be improved.",
+      "notes": "If bundle size is over budget, the fix usually lives in phase 4, not phase 8. Say so."
+    }
+  ],
+  "quality_bar": {
+    "must": [
+      "The direction was chosen by the user, from options, with their eyes on previews - or, if the user waived it, chosen by you with a stated reason.",
+      "Tokens exist as a file the build imports.",
+      "The page was screenshotted at three breakpoints and the screenshots were actually looked at.",
+      "At least two critics reviewed it, and their findings were either fixed or explicitly declined with a reason.",
+      "The page was re-inspected after the last fix.",
+      "Cost was reported."
+    ],
+    "fails": [
+      "Building without locking direction first.",
+      "Presenting a single reference option instead of choices.",
+      "Claiming quality without a screenshot.",
+      "Declining every finding because fixing is expensive.",
+      "Shipping with an unreported cost."
+    ]
+  }
+}

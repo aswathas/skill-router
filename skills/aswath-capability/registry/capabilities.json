@@ -88,11 +88,10 @@
         "browser inspector",
         "visual regression",
         "look-and-fix",
-        "screenshot"
-      ],
-      "weak": [
+        "screenshot",
         "inspect"
       ],
+      "weak": [],
       "files": [
         "inspect",
         "screenshot",
@@ -239,7 +238,11 @@
         "milestone",
         "break down",
         "what order",
-        "ship these"
+        "ship these",
+        "approved brief",
+        "collect requirements",
+        "requirements gathering",
+        "plan a hackathon"
       ],
       "weak": [
         "plan",
@@ -364,7 +367,10 @@
         "does not break",
         "break the contract",
         "raise coverage",
-        "coverage on"
+        "coverage on",
+        "exploratory qa",
+        "dogfood the app",
+        "bug hunting pass"
       ],
       "weak": [
         "test",
@@ -424,7 +430,8 @@
         "split it up",
         "tidy the",
         "nested conditionals",
-        "rewriting everything"
+        "rewriting everything",
+        "task-relevant"
       ],
       "weak": [
         "simplify",
@@ -503,7 +510,12 @@
         "api documentation",
         "into a spec",
         "a spec people",
-        "turn this design into"
+        "turn this design into",
+        "claude academy",
+        "academy course",
+        "learning course",
+        "product course",
+        "rfq-to-quote"
       ],
       "weak": [
         "document",
@@ -527,7 +539,10 @@
         "internal comm",
         "status report",
         "linkedin post",
-        "ghostwrite"
+        "ghostwrite",
+        "humanize",
+        "strip ai-isms",
+        "remove ai writing"
       ],
       "weak": [
         "writing",
@@ -593,11 +608,10 @@
         "skill creator",
         "new skill",
         "skill manifest",
-        "smallest useful ui skills context"
-      ],
-      "weak": [
+        "smallest useful ui skills context",
         "skill"
       ],
+      "weak": [],
       "files": [
         "skill-template",
         "template-skill",
@@ -677,7 +691,11 @@
         "navigate to url",
         "scrape a page",
         "scrape the prices",
-        "off this page"
+        "off this page",
+        "geocode an address",
+        "openstreetmap",
+        "route between points",
+        "points of interest"
       ],
       "weak": [
         "browser",
@@ -698,7 +716,13 @@
         "email thread",
         "inbox triage",
         "unread inbox",
-        "reply-all"
+        "reply-all",
+        "imap email",
+        "smtp email",
+        "himalaya email",
+        "imessage",
+        "send an imessage",
+        "imsg"
       ],
       "weak": [],
       "files": [
@@ -763,7 +787,9 @@
         "task list entry",
         "task list",
         "todo list",
-        "add a task"
+        "add a task",
+        "apple reminders",
+        "remindctl"
       ],
       "weak": [
         "tasks",
@@ -824,7 +850,11 @@
         "algorithmic art",
         "image prompt",
         "generate an illustration",
-        "illustration for"
+        "illustration for",
+        "search gifs",
+        "tenor gif",
+        "gif search",
+        "download"
       ],
       "weak": [
         "image",
@@ -909,7 +939,8 @@
         "video captions",
         "medialib",
         "short clip",
-        "produce a clip"
+        "produce a clip",
+        "songwriting"
       ],
       "weak": [
         "remotion",
@@ -1015,7 +1046,12 @@
         "webhook",
         "api endpoint",
         "sdk client",
-        "api route handler"
+        "api route handler",
+        "no vendor mcp",
+        "manufacturing system",
+        "supplier quote request",
+        "rfq to quote",
+        "chase a buyer"
       ],
       "weak": [
         "api"
@@ -1047,6 +1083,13 @@
         "schema",
         "tables",
         "index"
+      ],
+      "weak_exact": [
+        "prisma",
+        "sql",
+        "schema",
+        "migration",
+        "database"
       ]
     },
     "forms": {
@@ -1195,11 +1238,11 @@
       "strong": [
         "verify this",
         "with real evidence",
-        "before you tell me"
+        "before you tell me",
+        "verification"
       ],
       "weak": [
-        "verify",
-        "verification"
+        "verify"
       ],
       "files": [
         "verification",
@@ -1215,7 +1258,11 @@
         "set up gmail",
         "new mail lands",
         "lands in a sheet",
-        "sync my contacts"
+        "sync my contacts",
+        "drive the desktop",
+        "desktop control",
+        "background-first desktop",
+        "background-first"
       ],
       "weak": [
         "automation",
@@ -1224,7 +1271,8 @@
       ],
       "files": [],
       "require_name": [
-        "automation"
+        "automation",
+        "computer-use"
       ]
     },
     "agent-process": {
@@ -1247,7 +1295,11 @@
         "the workflow",
         "run several candidates",
         "in parallel and graft",
-        "graft the best"
+        "graft the best",
+        "steps of ai adoption",
+        "ai adoption",
+        "recurring champion routines",
+        "scheduled tasks"
       ],
       "weak": [
         "brainstorm",
@@ -1401,7 +1453,10 @@
         "wikilink",
         "wiki link",
         "zettelkasten",
-        "project's full history"
+        "project's full history",
+        "databases",
+        "pinned faq",
+        "repeat questions"
       ],
       "weak": [
         "obsidian",
@@ -1437,7 +1492,10 @@
         "file organizer",
         "downloads folder",
         "sort my",
-        "by file type"
+        "by file type",
+        "box api",
+        "box files",
+        "manages"
       ],
       "weak": [
         "organizer",
@@ -1494,7 +1552,15 @@
         "benchmark-sandbox",
         "fix-merge-conflicts"
       ],
-      "files": []
+      "files": [],
+      "weak_exact": [
+        "finish-a-branch",
+        "release",
+        "ship",
+        "pr",
+        "ci",
+        "deploy"
+      ]
     },
     "frontend-web": {
       "strong": [
@@ -1523,7 +1589,8 @@
         "reverse engineer",
         "quiz",
         "exercise directory",
-        "reading every source file"
+        "reading every source file",
+        "ai maturity"
       ],
       "weak": [
         "domain-name",
@@ -1542,7 +1609,10 @@
         "micropython",
         "m5stack",
         "read aloud",
-        "text to speech"
+        "text to speech",
+        "airtag",
+        "find my device",
+        "track a device"
       ],
       "weak": [
         "cardputer",
@@ -1568,7 +1638,10 @@
         "plugin manifest",
         "hook script",
         "telegram bot",
-        "chat bot"
+        "chat bot",
+        "compatibility-safe migration",
+        "migrate safely",
+        "dependency migration"
       ],
       "weak": [
         "command-development",
@@ -1604,11 +1677,13 @@
         "writing style",
         "writing voice",
         "terse voice",
-        "response tone"
-      ],
-      "weak": [
+        "response tone",
+        "classical chinese",
+        "wenyan",
+        "megacave",
         "caveman"
       ],
+      "weak": [],
       "files": []
     },
     "social-media": {
@@ -1632,7 +1707,13 @@
         "best practices",
         "coding standards",
         "lint",
-        "style guide"
+        "style guide",
+        "lean build",
+        "minimal viable feature",
+        "smallest feature",
+        "overbuilding",
+        "patterns worth sharing",
+        "good practices worth spreading"
       ],
       "weak": [
         "best-practices",
@@ -1730,7 +1811,15 @@
         "brief",
         "context-file"
       ],
-      "files": []
+      "files": [],
+      "weak_exact": [
+        "init",
+        "onboard",
+        "project",
+        "context",
+        "readme",
+        "docs"
+      ]
     },
     "prompt-engineering": {
       "strong": [
@@ -1844,6 +1933,16 @@
       "weak": [
         "init"
       ],
+      "files": []
+    },
+    "commercial-requests": {
+      "strong": [
+        "supplier quote request",
+        "buyer bids",
+        "commercial terms",
+        "quote a request for rfq"
+      ],
+      "weak": [],
       "files": []
     }
   },
