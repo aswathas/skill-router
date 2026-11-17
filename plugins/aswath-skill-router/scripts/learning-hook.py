@@ -166,7 +166,7 @@ def main():
     st = load_session(session)
     event = args.event or payload.get("hook_event_name") or payload.get("event") or ""
 
-    tool = payload.get("tool_name") or payload.get("toolName") or ""
+    tool = str(payload.get("tool_name") or payload.get("toolName") or "").strip().lower()
     tinput = payload.get("tool_input") or payload.get("toolInput") or {}
     if not isinstance(tinput, dict):
         tinput = {}
@@ -191,7 +191,7 @@ def main():
             if not skill:
                 return 0
 
-            if tool in ("edit", "write", "notebook_edit"):
+            if tool in ("edit", "write", "notebook_edit", "notebookedit"):
                 path = tinput.get("file_path") or tinput.get("path") or ""
                 if path:
                     files = st.get("files") or []
