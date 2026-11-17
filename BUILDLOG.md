@@ -26,3 +26,16 @@ git history; each entry below names the branch, the change and how it was verifi
 - Where: `aswathas/skill-router`, branch `feat/claude-code-plugin`.
 - Records: `docs/reviews/decision-log.md` (D1-D5), `docs/reviews/change-inventory.md`,
   `docs/reviews/prompts.md`.
+
+## 2026-11-17 — v0.1.1 follow-up, marketplace source path
+- Branch: `fix/marketplace-source-path`
+- Shipped: `.claude-plugin/marketplace.json` now writes the plugin source as
+  `./plugins/aswath-skill-router`.
+- Why: the merged manifest was rejected by the installer with
+  `source: Invalid string: must start with "./"`. Claude Code wants a relative source
+  written with the `./` prefix.
+- Verified: `claude plugin install aswath-skill-router@aswath-skill-router -y --json`
+  -> `{"outcome":"ok"}` against the corrected manifest.
+- Where: `aswathas/skill-router`, branch `fix/marketplace-source-path`.
+- Records: `docs/reviews/decision-log.md` (D6), `docs/reviews/change-inventory.md`.
+

@@ -98,3 +98,23 @@ decision and the command that proves it.
   and the marketplace entry in `.claude-plugin/marketplace.json` pins the same version.
 - Consequence: a cached install on either harness is invalidated by the version change
   rather than silently running stale code.
+
+## D6 — Write the marketplace source as "./plugins/aswath-skill-router"
+- Date: 2026-11-17
+- Prompt: "yes push"
+- Context: after the first merge, installing from the GitHub marketplace failed with
+  `source: Invalid string: must start with "./"`. Claude Code wants a relative
+  marketplace source written as `./<path>`, not `<path>`.
+- Options:
+  - Move the plugin to the repo root and use `"source": "./"` — relocates files to satisfy
+    a string rule, and breaks the `plugins/<name>` layout the MiniMax install uses.
+  - Write `"./plugins/aswath-skill-router"` — one prefix, layout untouched.
+  - Publish the plugin in its own repository — more moving parts for the same result.
+- Chosen: `"./plugins/aswath-skill-router"`. The layout stays as the MiniMax side expects
+  it and the rule is satisfied.
+- Evidence: `claude plugin install aswath-skill-router@aswath-skill-router -y --json`
+  -> failed with `source: Invalid string: must start with "./"` against the merged
+  manifest; after the fix the same command against the same manifest returned
+  `{"outcome":"ok","plugin":"aswath-skill-router@aswath-skill-router"}`.
+- Consequence: the GitHub marketplace installs the plugin, so a second machine needs
+  `claude plugin marketplace add aswathas/skill-router` and nothing else.
