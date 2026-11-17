@@ -15,7 +15,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "skill|edit|write|notebook_edit|bash",
+        "matcher": "skill|Skill|edit|Edit|write|Write|notebook_edit|NotebookEdit|bash|Bash",
         "hooks": [
           {
             "type": "command",

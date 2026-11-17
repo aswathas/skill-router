@@ -1,0 +1,26 @@
+{
+  "name": "aswath-skill-router",
+  "owner": {
+    "name": "aswathas",
+    "url": "https://github.com/aswathas"
+  },
+  "plugins": [
+    {
+      "name": "aswath-skill-router",
+      "source": "plugins/aswath-skill-router",
+      "version": "0.1.1",
+      "description": "Learns which skill a request actually needs from what really happens in a session - the ask, the edits, the corrections, the deletes - and feeds that back into the capability router so the same mistake is not made twice.",
+      "author": {
+        "name": "aswathas",
+        "url": "https://github.com/aswathas"
+      },
+      "homepage": "https://github.com/aswathas/skill-router",
+      "license": "MIT",
+      "keywords": [
+        "router",
+        "skills",
+        "learning"
+      ]
+    }
+  ]
+}
