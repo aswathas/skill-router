@@ -13,3 +13,16 @@ Every file changed in a range appears exactly once here, including these docs.
 | `docs/reviews/change-inventory.md` | New: this table | Contract requires one row per changed file, including the docs themselves | Every file in `git status -s` appears exactly once above |
 | `docs/reviews/prompts.md` | New: the prompts that shaped this work and what each one produced | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |
 | `BUILDLOG.md` | New: running narrative of what shipped, when, where | Contract requires the build log beside the docs tree | Read back; entry names the release, the branch and the verification command |
+
+## 2026-11-18 — v0.1.2, Claude Code plugin-root resolution
+
+| File | What changed | Why | How tested |
+|---|---|---|---|
+| `plugins/aswath-skill-router/hooks/hooks.json` | Both `command` values changed from `sh "${PLUGIN_ROOT}/scripts/learning-hook.sh" <event>` to `sh -c 'p="${CLAUDE_PLUGIN_ROOT:-${PLUGIN_ROOT}}"; exec sh "$p/scripts/learning-hook.sh" <event>'` | Claude Code does not substitute `${PLUGIN_ROOT}`, so the hook died on every prompt with `sh: /scripts/learning-hook.sh: No such file or directory`. One shared hook file has to serve both harnesses | Live `claude -p` run: no "No such file" error, and the hook wrote `session-d36697d6-9505-48f8-8e25-d61c3b70e7e5.json` with the prompt in it; direct run with `CLAUDE_PLUGIN_ROOT` exported printed `RESOLVED=[C:/Users/ADMIN/.claude/plugins/cache/aswath-skill-router/aswath-skill-router/0.1.1]` and exited 0 |
+| `plugins/aswath-skill-router/.claude-plugin/plugin.json` | `version` 0.1.1 -> 0.1.2 | The shared hook file changed, so the manifest must not describe old contents | Grep of the file shows `"version": "0.1.2"`; JSON parses |
+| `plugins/aswath-skill-router/.minimax-plugin/plugin.json` | `version` 0.1.1 -> 0.1.2 | Same file, same reason | Grep shows `"version": "0.1.2"`; JSON parses |
+| `.claude-plugin/marketplace.json` | Plugin entry `version` 0.1.1 -> 0.1.2 | The marketplace entry pins the version a machine installs | Grep shows `"version": "0.1.2"`; JSON parses |
+| `docs/reviews/decision-log.md` | Added D7: resolve the plugin root at runtime from whichever variable the harness exports | Contract requires every decision to be written down, and this one has real alternatives | Read back; the entry names the failing error, the probe that proved the cause and the live verification |
+| `docs/reviews/change-inventory.md` | Added the v0.1.2 table above | Contract requires one row per changed file, including the docs themselves | Every file in `git status -s` for this branch appears exactly once above |
+| `docs/reviews/prompts.md` | Added the 2026-11-18 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |
+| `BUILDLOG.md` | Added the v0.1.2 entry | The running narrative | Read back; the entry names the branch, the change and the verification |
