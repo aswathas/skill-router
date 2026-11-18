@@ -28,3 +28,14 @@ repo, so the record is written by hand here.
   `~/.claude/settings.json` and the shared state file reset to `ultra`.
 - Work it caused: `~/.claude/settings.json`, `~/.minimax/caveman-state.txt`,
   `~/.minimax/HOOKS-README.md`. No file in this repo was touched by that work.
+
+## 2026-11-18 — Claude Code hook failure
+- Prompt: "Failed with non-blocking status code: sh: /scripts/learning-hook.sh: No such file or directory ," and then "solve this"
+- Decision it produced: D7 (resolve the plugin root at runtime from `CLAUDE_PLUGIN_ROOT`, falling
+  back to `PLUGIN_ROOT`, instead of hard-coding `${PLUGIN_ROOT}` in the shared hook file).
+- Work it caused: the `command` field of both hooks in
+  `plugins/aswath-skill-router/hooks/hooks.json`, both manifests and the marketplace entry bumped
+  to 0.1.2, and the records below. The same fix was mirrored into the installed copies on this
+  machine (`~/.claude/plugins/cache/aswath-skill-router/aswath-skill-router/0.1.1`,
+  `.../0.1.0` and `~/.minimax/plugins/aswath-skill-router`) so the error stops here and now,
+  while the upstream fix travels by pull request.

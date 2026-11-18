@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh \"${PLUGIN_ROOT}/scripts/learning-hook.sh\" UserPromptSubmit",
+            "command": "sh -c 'p=\"${CLAUDE_PLUGIN_ROOT:-${PLUGIN_ROOT}}\"; exec sh \"$p/scripts/learning-hook.sh\" UserPromptSubmit'",
             "commandWindows": "powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"${PLUGIN_ROOT}/scripts/learning-hook.ps1\" -Event UserPromptSubmit",
             "timeout": 5
           }
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh \"${PLUGIN_ROOT}/scripts/learning-hook.sh\" PostToolUse",
+            "command": "sh -c 'p=\"${CLAUDE_PLUGIN_ROOT:-${PLUGIN_ROOT}}\"; exec sh \"$p/scripts/learning-hook.sh\" PostToolUse'",
             "commandWindows": "powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"${PLUGIN_ROOT}/scripts/learning-hook.ps1\" -Event PostToolUse",
             "timeout": 5
           }

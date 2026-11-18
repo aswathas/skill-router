@@ -39,3 +39,26 @@ git history; each entry below names the branch, the change and how it was verifi
 - Where: `aswathas/skill-router`, branch `fix/marketplace-source-path`.
 - Records: `docs/reviews/decision-log.md` (D6), `docs/reviews/change-inventory.md`.
 
+## 2026-11-18 — v0.1.2, Claude Code plugin-root resolution
+- Branch: `fix/claude-plugin-root`
+- Shipped:
+  - `plugins/aswath-skill-router/hooks/hooks.json` — both `command` values now resolve the plugin
+    root at runtime: `sh -c 'p="${CLAUDE_PLUGIN_ROOT:-${PLUGIN_ROOT}}"; exec sh "$p/scripts/learning-hook.sh" <event>'`.
+    Claude Code exports `CLAUDE_PLUGIN_ROOT` and substitutes no `PLUGIN_ROOT`, so the shared file
+    addressed `/scripts/learning-hook.sh` and died on every prompt. MiniMax substitutes
+    `${PLUGIN_ROOT}`, which the fallback branch picks up. `commandWindows` is unchanged: Claude Code
+    does not read that key, and MiniMax's PowerShell path was already correct.
+  - `.claude-plugin/marketplace.json`, `plugins/aswath-skill-router/.claude-plugin/plugin.json` and
+    `plugins/aswath-skill-router/.minimax-plugin/plugin.json` bumped to 0.1.2.
+- Verified:
+  - `printenv CLAUDE_PLUGIN_ROOT` in a live hook process returns the cache path; `PLUGIN_ROOT` is unset.
+  - The new command with that variable exported printed
+    `RESOLVED=[C:/Users/ADMIN/.claude/plugins/cache/aswath-skill-router/aswath-skill-router/0.1.1]`
+    and exited 0.
+  - A live `claude -p` run afterwards printed no "No such file" error, and the hook wrote
+    `~/.agents/state/session-d36697d6-9505-48f8-8e25-d61c3b70e7e5.json` holding the prompt — the
+    hook's own trace that it ran.
+- Where: `aswathas/skill-router`, branch `fix/claude-plugin-root`.
+- Records: `docs/reviews/decision-log.md` (D7), `docs/reviews/change-inventory.md`,
+  `docs/reviews/prompts.md`.
+

@@ -118,3 +118,38 @@ decision and the command that proves it.
   `{"outcome":"ok","plugin":"aswath-skill-router@aswath-skill-router"}`.
 - Consequence: the GitHub marketplace installs the plugin, so a second machine needs
   `claude plugin marketplace add aswathas/skill-router` and nothing else.
+
+## D7 — Resolve the plugin root at runtime, from whichever variable the harness exports
+- Date: 2026-11-18
+- Prompt: "solve this" (the pasted error: `Failed with non-blocking status code: sh: /scripts/learning-hook.sh: No such file or directory`)
+- Context: the shared `hooks.json` addressed the hook script as `"${PLUGIN_ROOT}/scripts/learning-hook.sh"`.
+  `${PLUGIN_ROOT}` is the MiniMax Code placeholder. Claude Code substitutes and exports
+  `${CLAUDE_PLUGIN_ROOT}` instead, and exports no `PLUGIN_ROOT` at all, so the path collapsed to
+  `/scripts/learning-hook.sh` and the hook died on every prompt in Claude Code. One file has to
+  serve both harnesses.
+- Options:
+  - Two hook files, one per harness, selected by the harness - Claude Code reads
+    `hooks/hooks.json` from the plugin root and MiniMax reads its own path, so a shared file
+    cannot be swapped per harness without two plugin packages.
+  - Ask Claude Code to substitute `${PLUGIN_ROOT}` - it does not; the variable is not one of its
+    placeholders and no amount of editing the manifest makes it one.
+  - Resolve the root at runtime from the environment, preferring the Claude variable and falling
+    back to the MiniMax one - `sh -c 'p="${CLAUDE_PLUGIN_ROOT:-${PLUGIN_ROOT}}"; exec sh "$p/scripts/learning-hook.sh" <event>'`.
+    Claude Code exports `CLAUDE_PLUGIN_ROOT` and leaves `PLUGIN_ROOT` unset, so it takes the first
+    branch; MiniMax substitutes `${PLUGIN_ROOT}` into the command text, so the fallback branch
+    carries the right path. Neither harness sees a literal `${...}` left in the path.
+  - Hard-code an absolute path - breaks on every other machine and every plugin version.
+- Chosen: the runtime resolver.
+- Evidence: `printenv CLAUDE_PLUGIN_ROOT` in a live Claude Code hook process returns
+  `C:/Users/ADMIN/.claude/plugins/cache/aswath-skill-router/aswath-skill-router/0.1.1`, and
+  `PLUGIN_ROOT` is unset. Running the new command with that variable exported resolved
+  `RESOLVED=[C:/Users/ADMIN/.claude/plugins/cache/aswath-skill-router/aswath-skill-router/0.1.1]`
+  and exited 0. A live `claude -p` run afterwards produced no "No such file" error and the hook
+  wrote its session state (`session-d36697d6-...json` holding the prompt), which is the hook's own
+  proof that it ran.
+- Consequence: the `command` field works on both harnesses. `commandWindows` is left untouched:
+  Claude Code does not read that key (it ran the `sh` command on Windows, which is why the failure
+  was a `sh:` error), and MiniMax's PowerShell path already substitutes `${PLUGIN_ROOT}` correctly.
+- Note on the resolver form: the exact token `${CLAUDE_PLUGIN_ROOT}` deliberately does not appear in
+  the command, so a harness that substitutes placeholders textually leaves the expression intact
+  and the shell resolves it from the environment.
