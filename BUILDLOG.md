@@ -160,3 +160,23 @@ git history; each entry below names the branch, the change and how it was verifi
 - Where: `aswathas/skill-router`, branch `feat/precedent-routing`.
 - Records: `docs/reviews/decision-log.md` (D14), `docs/reviews/change-inventory.md`,
   `docs/reviews/prompts.md`.
+
+## 2026-11-24 — one ranking path, and the load rule
+
+- What:
+  - `bin/router.py`: `rank_all()` is now the only ranking path. `ask`, `why`
+    and `ensure` all use it, so the router cannot explain one answer and give
+    another.
+  - The learning hook's `load` row no longer counts as an outcome. A load
+    says which skill was used for a request; it does not say whether the work
+    succeeded, so it must not move the ledger score.
+  - `tests/test_learning_hook.py` pins the three hook rules, and
+    `tests/test_sync.py` fails when the two copies of the capability skill
+    drift - the failure that once made the router silently stop learning.
+  - The plugin moves to 0.1.4.
+- Verified: `pytest tests` -> 62 passed; `router ask`, `router why` and
+  `router ensure` agree; the simulated hook run leaves the ledger score at
+  zero for a load.
+- Where: `aswathas/skill-router`, branch `feat/one-ranking-path`.
+- Records: `docs/reviews/decision-log.md` (D15), `docs/reviews/change-inventory.md`,
+  `docs/reviews/prompts.md`.

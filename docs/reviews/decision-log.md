@@ -349,3 +349,27 @@ decision and the command that proves it.
 - Consequence: the part of the limit that can be solved is solved, and it is
   the part the benchmark cannot see, because the benchmark has no history. It
   works on the requests this machine has actually been asked.
+
+## D15 — One ranking path for every command, and a load is never an outcome
+- Date: 2026-11-24
+- Prompt: "push everything solve everything and push"
+- Context: two loose ends found while finishing. First, `ask`, `why` and
+  `ensure` each ranked on their own path, so the router could explain one
+  answer and give another. Second, the hook's new `load` row went through the
+  same writer as the accepts, which counted it as a partial outcome - so a
+  skill that was merely loaded moved its ledger score by +2, and the decision
+  log said it must not.
+- Options:
+  - Fix the routing in each command - three copies of the same sequence, and
+    the same drift again.
+  - One shared ranking function, and a flag on the writer that says whether an
+    event counts.
+- Chosen: `rank_all()` in the CLI, used by `ask`, `why` and `ensure`, and
+  `observe(..., count=False)` for the load row. The hook's rule is now tested:
+  a load writes the request and the skill, and leaves the ledger score at zero.
+- Evidence: `router ask`, `router why version-bump` and `router ensure` now
+  return the same skill for the same request; `pytest tests` -> 62 passed,
+  including three new hook tests for the load/accept/reject rules.
+- Consequence: the CLI has one ranking path, and precedent can never inflate a
+  skill's quality score. The plugin moves to 0.1.4 because the shared hook file
+  changed after 0.1.3 was published.

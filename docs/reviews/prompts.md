@@ -83,3 +83,11 @@ repo, so the record is written by hand here.
 - Work it caused: the `load` observation in the learning hook, the three
   version bumps, `scripts/precedent.py`, the precedent in `router ask`, the
   `router precedent` command, `tests/test_precedent.py`, and the records above.
+
+## 2026-11-24 — finishing, and the two loose ends it exposed
+- Prompt: "push everything solve everything and push"
+- Decision it produced: D15 (one ranking path for ask/why/ensure; a load never
+  counts as an outcome) and the plugin version bump to 0.1.4.
+- Work it caused: `rank_all()` in `bin/router.py`, `observe(..., count=False)`
+  in the learning hook, `tests/test_learning_hook.py`, `tests/test_sync.py`, the
+  version bumps in the three manifests, and the records above.
