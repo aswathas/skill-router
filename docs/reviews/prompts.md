@@ -39,3 +39,27 @@ repo, so the record is written by hand here.
   machine (`~/.claude/plugins/cache/aswath-skill-router/aswath-skill-router/0.1.1`,
   `.../0.1.0` and `~/.minimax/plugins/aswath-skill-router`) so the error stops here and now,
   while the upstream fix travels by pull request.
+
+## 2026-11-23 — the router as a complete command
+- Prompt: "install enders game book" (unrelated; the book was fetched through the
+  bookfetch MCP and converted with Calibre).
+- Prompt: "https://github.com/aswathas/skill-router intall this bro?" - answered by
+  checking the installed plugins: `aswath-skill-router@aswath-skill-router` version
+  0.1.2 was already installed and enabled, with the marketplace refreshed and the
+  upstream manifest still at 0.1.2. No install was needed.
+- Prompt: "how should or hwo will the skill router used is it working" - produced the
+  finding that the ledger was inert (D8).
+- Prompt: "how to make this full fledget i want it like taste model or skill router like
+  command code i need complete working of ths" - produced the CLI decision (D9), the
+  scope decision to include catalogue parking, and the fetch-and-forge feature (D10).
+- Prompt: "everything also one more feature find the best skill in the internet and
+  update automaticallyu or if new task is given get new skills(tested with some evals
+  download and load that skill automaticcly for the task and use it then copy that skill
+  and store it under aswath skills(forging) ( not use this lets try this additonaly
+  copying best skills and building something bettert than them for our own custom
+  skills)" - produced D10 and D11.
+- Work it caused: `bin/router.py`, `bin/park-skills.py`, the ledger fix in
+  `skills/aswath-capability/scripts/build-registry.py`, `evals/run_eval.py`,
+  `tests/test_cli.py`, the shims in `~/bin`, and the records below. The forged skill
+  landed in the separate `aswath-skills` repo
+  (`skills/utilities/aswath-rust-security/`), with its manifest and README rows.

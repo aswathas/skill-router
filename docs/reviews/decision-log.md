@@ -153,3 +153,95 @@ decision and the command that proves it.
 - Note on the resolver form: the exact token `${CLAUDE_PLUGIN_ROOT}` deliberately does not appear in
   the command, so a harness that substitutes placeholders textually leaves the expression intact
   and the shell resolves it from the environment.
+
+## D8 — Fold the ledger into the score, not into the registry file
+- Date: 2026-11-23
+- Prompt: "how should or hwo will the skill router used is it working"
+- Context: the shared ledger stores outcomes as counts per skill
+  (`{"skills": {"mdview": {"accepts": 1, ...}}}`). `build-registry.py` read
+  `ledger.get(entry["name"])`, which returned that whole dict, and wrote it into
+  `entry["quality"]`. `invoke.quality_of()` then read `q.get("score", 0)` from the
+  dict and got 0. The ledger was therefore present on disk and inert: the benchmark
+  showed `no_ledger` 0.795 against `full` 0.792, i.e. removing the ledger changed
+  nothing.
+- Options:
+  - Rewrite the ledger into a flat map at write time - the plugin hook owns that file
+    and would have to learn a new format.
+  - Flatten it in `build-registry.py` only - the weight is then correct but only
+    after a registry rebuild, and the registry was 10 days stale.
+  - Flatten it where the count becomes a number, and apply it live at query time -
+    one formula, used by both the builder and the CLI.
+- Chosen: flatten in `load_ledger()` (accept +10, reject -50, partial +2, keyed by
+  name and by slug) and apply the same weight live in the CLI before ranking. The
+  builder writes it into the registry; the CLI overrides it with the current ledger
+  so a fresh score takes effect without a rebuild.
+- Evidence: `router learn` prints `aswath-publish-github +30`,
+  `superpowers:writing-plans +70`, `some-generic-skill -50`; `router ask` prints the
+  ledger weight next to the match score; `router rebuild` now stamps `quality` on
+  plugin skills as well as local and marketplace ones.
+- Consequence: rejecting a skill now demotes it at the next query, not at the next
+  rebuild.
+
+## D9 — One CLI in this repo, installed through a PATH shim
+- Date: 2026-11-23
+- Prompt: "how to make this full fledget i want it like taste model or skill router like command code i need complete working of ths"
+- Context: the router could only be driven as `python <path>/scripts/invoke.py`, and
+  that path existed in two copies that had already drifted.
+- Options:
+  - Install the skill into every harness root - more copies, the same drift.
+  - Ship a CLI in this repo and expose it through `~/bin` - one implementation, one
+    PATH entry, every harness gets the same command.
+  - Rewrite the ranker as a service - no caller needs a daemon.
+- Chosen: `bin/router.py` in this repo, exposed as `router` through
+  `~/bin/router` and `~/bin/router.cmd`. The CLI imports the shipped ranker from
+  `skills/aswath-capability/scripts/invoke.py`, so it cannot drift from it.
+- Evidence: `router ask "roast this UI and fix it"` -> `design-taste-frontend`;
+  `router ask "write a python script that parses csv"` -> `aswath-csvjson`; the same
+  commands work from `cmd.exe` through `router.cmd`.
+- Consequence: one command works in every harness, and the ranker stays single-copy.
+
+## D10 — Fetch a skill from the internet, judge it, then mint it as ours
+- Date: 2026-11-23
+- Prompt: "everything also one more feature find the best skill in the internet and update automaticallyu or if new task is given get new skills(tested with some evals download and load that skill automaticcly for the task and use it then copy that skill and store it under aswath skills(forging) ( not use this lets try this additonaly copying best skills and building something bettert than them for our own custom skills)"
+- Context: the catalogue is 3,261 skills and still does not cover everything. The
+  user wants a skill found on the internet to be fetched, tested, used for the task
+  and then kept as an `aswath-*` skill.
+- Options:
+  - Install the third-party skill as it is - the catalogue stops being ours and the
+    naming, the description rule and the category rule are all broken.
+  - Mint it into `aswath-skills` under our conventions, with provenance - the
+    catalogue keeps one naming scheme and one rule set, and the origin stays
+    recorded.
+  - Fetch at request time with no gate - a wrong skill wins the need and is kept.
+- Chosen: `router ensure` decides whether the catalogue can answer the need. If the
+  request names no capability in full, it searches GitHub for `SKILL.md`, downloads
+  the repos, screens the candidates, runs each survivor against the 298-case
+  benchmark, and mints the winner into `aswath-skills` as `aswath-<slug>` with a
+  `Use when` description, an origin line, a manifest row, a README row and a
+  re-run of `install.ps1`.
+- Evidence: `router ensure "detect and fix memory leaks in a rust binary"` ->
+  no installed skill names the need -> fetched `claude-dev-suite/claude-dev-suite` ->
+  `rust-security` won the need and stole 1 of 298 cases (`--allow-steal 1`) ->
+  forged to `skills/utilities/aswath-rust-security/SKILL.md` -> `install.ps1` linked
+  it into `~/.claude/skills` and `~/.agents/skills` -> `router ask "rust security
+  vulnerabilities cargo audit"` now answers `aswath-rust-security`.
+- Consequence: the catalogue can grow from the internet without losing its shape.
+
+## D11 — Quote the skill description in the forged frontmatter
+- Date: 2026-11-23
+- Prompt: same as D10.
+- Context: the first forge wrote `description: Use when | Rust security patterns...
+  USE WHEN: user works with "Rust"...`. A plain YAML scalar ends at the first `: `,
+  so the frontmatter failed to parse and the harness loaded the skill with the
+  description `> Origin: github.com/claude-dev-suite/claude-dev-suite. Fetched and
+  re-published under the aswath`.
+- Options:
+  - Strip the colon out of the description - silently edits the author's text.
+  - Write the description as a quoted scalar - one line of code, no text lost.
+  - Drop descriptions with colons - loses half the good candidates.
+- Chosen: quoted scalar, whitespace collapsed to one line.
+- Evidence: `skills/utilities/aswath-rust-security/SKILL.md` reads
+  `description: "Use when | Rust security patterns..."` and the harness lists the
+  skill as `aswath-rust-security: Use when | Rust security patterns for web
+  applications. ...`.
+- Consequence: a fetched skill loads with the description it was written with.
