@@ -58,7 +58,43 @@ router rebuild                            # re-index the installed skills
 router eval                               # the benchmark, written to evals/local/
 router ensure "detect memory leaks in rust"  # find or fetch a skill for the need
 router park status --root claude          # what parking would move
+router sem build                          # build the local embedding index
+router sem status                         # what the semantic layer is doing
+router sem eval                           # measure the semantic layer
 ```
+
+## The semantic layer
+
+The keyword matcher only fires when a request shares a literal word with a
+capability's keyword list. The benchmark's own error analysis says that is
+where the loss is: **42 of 45 failures were requests that never named the
+capability at all**.
+
+`router sem build` embeds the catalogue with a local model — no API key, no
+data leaving the machine — and the router then uses it in two measured places:
+
+- **rescue** — when the keywords name no capability, the skill nearest to the
+  request votes for its capability. Exactly one capability is added, because
+  twenty voted capabilities drown the taxonomy (measured: it cost 30 points of
+  top-1).
+- **tie** — among the skills carrying the winning capability, the one nearest
+  to the request wins the exact-skill check.
+
+Measured on the same 298 cases, against the shipped router:
+
+| profile | capability top-1 | strict top-1 | mean cost |
+|---|---|---|---|
+| keyword only | 0.805 | 0.206 | 2435 |
+| conservative (default) | 0.805 | 0.222 | 2096 |
+| aggressive | 0.795 | 0.254 | 1947 |
+
+The default is the conservative profile: it never costs a capability case and
+it lifts the exact-skill rate. The aggressive profile wins three exact-skill
+cases and loses three capability ones, so it is opt-in
+(`SKILL_ROUTER_SEMANTIC_PROFILE=aggressive`).
+
+If the local embedding server is down, the router falls back to the keyword
+path and says so. `SKILL_ROUTER_SEMANTIC=off` switches the layer off.
 
 `router ensure` is the loop that closes the catalogue: when a need names no
 capability the router knows, it searches GitHub for a `SKILL.md`, screens the

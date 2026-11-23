@@ -114,8 +114,15 @@ def cmd_ask(args):
     inv = invoke()
     reg = load_registry()
     cap_map = load_caps(inv)
-    cands, caps = inv.score_candidates(reg, args.need, cap_map)
-    cands = inv.cost_gate(cands, args.cheap_cap)
+    semantic = semantic_layer()
+    info = {}
+    if semantic is not None and semantic.enabled():
+        cands, info = semantic.rank(reg, cap_map, args.need)
+        if args.cheap_cap:
+            cands = inv.cost_gate(cands, args.cheap_cap)
+    else:
+        cands, caps = inv.score_candidates(reg, args.need, cap_map)
+        cands = inv.cost_gate(cands, args.cheap_cap)
     if not cands:
         print("no skill in the catalogue matches this need.")
         print("try: router fetch \"%s\"" % args.need)
@@ -124,7 +131,7 @@ def cmd_ask(args):
     if args.json:
         print(json.dumps({
             "need": args.need,
-            "capabilities": caps,
+            "semantic": info,
             "results": [{
                 "name": c.get("name"),
                 "slug": c.get("slug"),
@@ -144,11 +151,57 @@ def cmd_ask(args):
           % (",".join(best.get("_caps") or []) or "-",
              best.get("_match"), inv.quality_of(best)))
     print("path    : %s" % (best.get("path") or "-"))
+    if info.get("semantic"):
+        print("semantic: on | rescued %s | neighbours %s"
+              % (info.get("rescued") or "no", info.get("neighbours")))
+    elif info.get("reason"):
+        print("semantic: off (%s)" % info["reason"])
     if len(top) > 1:
         print("others  :")
         for c in top[1:]:
             print("          %-38s %-10s %5s tok  match %s"
                   % (c.get("name"), c.get("source"), inv.tokens_of(c), c.get("_match")))
+    return 0
+
+
+def semantic_layer():
+    """The semantic layer, if it is installed. None when it is not."""
+    path = SKILL_SCRIPTS / "semantic.py"
+    if not path.is_file():
+        return None
+    spec = importlib.util.spec_from_file_location("aswath_semantic", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def cmd_sem(args):
+    """Build the embedding index, show its state, or query it."""
+    semantic = semantic_layer()
+    if semantic is None:
+        raise SystemExit("semantic layer not installed")
+    if args.action == "status":
+        for k, v in semantic.status().items():
+            print("%-14s %s" % (k, v))
+        return 0
+    if args.action == "build":
+        embed = semantic.embed
+        reg = json.loads(Path(state_dir() / "skills.json").read_text(encoding="utf-8"))
+        caps = json.loads(Path(state_dir() / "capabilities.json").read_text(encoding="utf-8"))
+        embed.build(reg, caps.get("capabilities", {}))
+        return 0
+    if args.action == "eval":
+        script = REPO / "evals" / "run_semantic_eval.py"
+        out = str(REPO / "evals" / "local" / "semantic.json")
+        r = subprocess.run([sys.executable, str(script), "--out", out],
+                           capture_output=True, text=True)
+        sys.stdout.write(r.stdout or "")
+        sys.stderr.write(r.stderr or "")
+        return r.returncode
+    reg = json.loads(Path(state_dir() / "skills.json").read_text(encoding="utf-8"))
+    cache = semantic.embed.load_cache()
+    for c, name in semantic.embed.query(args.text, reg, cache, top=args.top):
+        print("%.4f  %s" % (c, name))
     return 0
 
 
@@ -304,6 +357,13 @@ def main(argv=None):
     p.add_argument("--source")
     p.add_argument("--install", action="store_true")
     p.set_defaults(func=cmd_forge)
+
+    p = sub.add_parser("sem", help="the semantic layer")
+    p.add_argument("action", nargs="?", default="status",
+                   choices=["status", "build", "query", "eval"])
+    p.add_argument("text", nargs="?", default="")
+    p.add_argument("--top", type=int, default=10)
+    p.set_defaults(func=cmd_sem)
 
     p = sub.add_parser("park", help="trim the catalogue the agent sees")
     p.add_argument("action", nargs="?", default="status",

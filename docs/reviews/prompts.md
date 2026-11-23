@@ -63,3 +63,15 @@ repo, so the record is written by hand here.
   `tests/test_cli.py`, the shims in `~/bin`, and the records below. The forged skill
   landed in the separate `aswath-skills` repo
   (`skills/utilities/aswath-rust-security/`), with its manifest and README rows.
+
+## 2026-11-24 — solving the strict top-1 limit
+- Prompt: "lets solve the limit", after the router was pushed, merged and
+  explained. The limit is the one the repo's own analysis names: BM25 ties the
+  shipped router on exact-skill selection, and accuracy rises with token cost.
+- Decision it produced: D12 (a local embedding layer, used only where the
+  taxonomy says nothing, with the failed variants recorded) and D13 (a packed,
+  memoised index).
+- Work it caused: `skills/aswath-capability/scripts/embed.py`,
+  `skills/aswath-capability/scripts/semantic.py`,
+  `evals/run_semantic_eval.py`, `evals/exp_semantic.py`, `evals/exp_grid.py`,
+  `tests/test_semantic.py`, the `router sem` commands, and the records above.
