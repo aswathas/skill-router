@@ -245,3 +245,75 @@ decision and the command that proves it.
   skill as `aswath-rust-security: Use when | Rust security patterns for web
   applications. ...`.
 - Consequence: a fetched skill loads with the description it was written with.
+
+## D12 — A local embedding layer, used only where the taxonomy says nothing
+- Date: 2026-11-24
+- Prompt: "lets solve the limit"
+- Context: the stated limit is the one the repo's own analysis names: BM25 ties
+  the shipped router on exact-skill selection (strict top-1 0.397 both), and
+  accuracy rises with token cost. The error analysis behind it: 42 of 45
+  failures were requests that never named the capability, so the keyword
+  matcher inferred nothing and the router picked whatever was left. 27 of 38
+  strict failures were a sibling skill of the right capability winning.
+- Options:
+  - Train a ranker - the user declined model weights on purpose; the compounding
+    lever is the ledger and the taxonomy.
+  - Add a semantic layer over the catalogue - the "bolt-on later" step the
+    resolution model always allowed, and the one that attacks the named cause.
+  - Fix it with better keywords - the taxonomy is already the audited artefact
+    and the failures are requests that share no word with it.
+- Chosen: a local embedding layer, used in two measured places and no others.
+  The provider is the embedding model already sitting in LM Studio
+  (`text-embedding-nomic-embed-text-v1.5`), so nothing leaves the machine and no
+  key is needed.
+- What was measured and rejected, in order:
+  - Capability centroids (the mean of a capability's skill vectors) as a semantic
+    capability inference: **0.805 -> 0.399 top-1**. A centroid over up to 800
+    skills drifts toward the generic direction of the catalogue. "compare the
+    top three cloud providers" was nearest to the cost-tokens centroid.
+  - Many capabilities voted by the nearest skills: **0.805 -> 0.483**. Twenty
+    voted capabilities drown the taxonomy; every skill carrying a common tag
+    scores.
+  - A distinctive-name anchor ("changelog" in the request must reach
+    changelog-generator): **0.805 -> 0.742 top-1**, strict top-1 unchanged. A
+    rare name word pulls in wrong skills as often as right ones.
+  - A name-only embedding as the strict-skill tie-break: it picks the expected
+    skill in 6 of 63 strict cases.
+  - What the data says about the strict subset: the expected skill sits at
+    **median rank 154** by description similarity, and its nearest sibling
+    reaches only 0.76 cosine. The strict subset is not a duplicate-skill
+    problem; it is an identifier-resolution problem.
+- What was kept, and what it is worth (298 cases, same metrics):
+  | profile | capability top-1 | strict top-1 | mean cost |
+  |---|---|---|---|
+  | keyword only | 0.805 | 0.206 | 2435 |
+  | conservative (default) | 0.805 | 0.222 | 2096 |
+  | aggressive | 0.795 | 0.254 | 1947 |
+  The conservative profile rescues only when the keywords said nothing at all,
+  keeps every capability case, lifts the exact-skill rate and cuts mean cost by
+  14%. The aggressive profile wins three exact-skill cases and loses three
+  capability cases (McNemar on the strict subset: 3-0, p = 0.125), so it is
+  opt-in.
+- Evidence: `python evals/run_semantic_eval.py` prints both rows and the
+  discordant pairs; `router sem status` shows the index (3,015 skills, 79
+  capability centroids, 768 dimensions, 12.6 MB packed); `router ask` answers in
+  0.3 s with the semantic line showing whether the layer fired.
+- Consequence: the shipped ranking in `invoke.py` is unchanged, so the numbers
+  the paper quotes still describe it. The semantic layer is additive, measured
+  separately, and falls back to the keyword path when the local provider is
+  down.
+
+## D13 — Keep the embedding index small and local
+- Date: 2026-11-24
+- Prompt: "lets solve the limit"
+- Context: the first index stored 3,065 vectors of 768 floats as JSON floats:
+  101 MB, and parsing it took a second on every call.
+- Options:
+  - Load it once per process and cache it - still 101 MB on disk and a second
+    per process.
+  - Pack the vectors as base64 float32 - 12.6 MB, and a fraction of the parse.
+- Chosen: base64 float32, and the parsed cache is memoised on the file's mtime.
+- Evidence: `embed.py build` writes 12.6 MB; `embed.py status` loads it in
+  0.96 s cold and 0.000 s warm; `router ask` answers in 0.31 s.
+- Consequence: the index is cheap enough to keep on disk and use on every
+  request.

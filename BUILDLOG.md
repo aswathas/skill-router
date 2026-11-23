@@ -101,3 +101,37 @@ git history; each entry below names the branch, the change and how it was verifi
 - Where: `aswathas/skill-router`, branch `feat/router-cli`.
 - Records: `docs/reviews/decision-log.md` (D8-D11), `docs/reviews/change-inventory.md`,
   `docs/reviews/prompts.md`.
+
+## 2026-11-24 — a local embedding layer for the requests that name nothing
+
+- What:
+  - `scripts/embed.py`: embeds the catalogue with the embedding model already in
+    LM Studio. No key, nothing leaves the machine. Vectors are stored base64
+    float32, so the index is 12.6 MB instead of 101 MB.
+  - `scripts/semantic.py`: the layer. `rescue` adds exactly one capability,
+    voted by the skill nearest to the request, and only when the keywords
+    named none. `tie` lets the nearest skill win among the carriers of the
+    winning capability. The shipped ranking in `invoke.py` is untouched, so the
+    numbers the paper quotes still describe it.
+  - `evals/run_semantic_eval.py`: the measurement, on the same 298 cases, with
+    McNemar on the strict subset.
+  - `router sem status|build|query|eval`, and `router ask` now uses the layer
+    and says whether it fired.
+- Why: 42 of 45 routing failures were requests that never named the capability,
+  and 27 of 38 strict failures were a sibling of the right skill winning.
+- What was tried and rejected, with the numbers: capability centroids
+  (top-1 0.805 -> 0.399), many capabilities voting (0.805 -> 0.483), a
+  distinctive-name anchor (0.805 -> 0.742), a name-only embedding as the
+  tie-break (6 of 63 strict cases).
+- What shipped: conservative by default - capability top-1 0.805 unchanged,
+  strict top-1 0.206 -> 0.222, mean cost 2435 -> 2096. Aggressive is opt-in:
+  strict 0.254 for three capability cases lost.
+- Verified:
+  - `pytest tests` -> 54 passed.
+  - `python evals/run_semantic_eval.py` -> both rows and 0-3 discordant pairs.
+  - `router ask "wire my calendar to a slack channel so meetings announce
+    themselves"` -> `gws-calendar-agenda`, with the semantic line, in 0.31 s.
+  - With the provider stopped, the router still answers and says why.
+- Where: `aswathas/skill-router`, branch `feat/semantic-layer`.
+- Records: `docs/reviews/decision-log.md` (D12-D13), `docs/reviews/change-inventory.md`,
+  `docs/reviews/prompts.md`.
