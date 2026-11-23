@@ -96,6 +96,37 @@ cases and loses three capability ones, so it is opt-in
 If the local embedding server is down, the router falls back to the keyword
 path and says so. `SKILL_ROUTER_SEMANTIC=off` switches the layer off.
 
+## Precedent: the last wall
+
+The strict-subset failures are not matching failures. On this machine 25 of
+the 63 strict expectations name skills that are **not installed at all**, so
+the ceiling is 38/63 = 0.603. Of the 38 that are installed, the keyword router
+picks the right one in 13 cases, the semantic one in 12, and their union is
+**14** — the two signals agree on the same cases, so no combination of them
+goes further.
+
+What is left is sibling choice: *generate a changelog from the commits* can
+legitimately reach `version-bump` or `changelog-generator`, and no matcher
+says which one you meant. History does.
+
+The learning hook already sees both halves of that pair — the request text and
+the skill that was loaded for it — and was discarding the pairing. Now:
+
+- the hook writes a `load` observation carrying the request and the skill. A
+  load is precedent, not an outcome: it never touches the ledger score.
+- `router precedent` shows what was used last time, and for what.
+- `router ask` gives that skill a bonus, and re-inserts it if the matcher
+  dropped it entirely.
+
+```bash
+router precedent                                   # the recorded pairs
+router precedent "bump the version and publish"    # what was used last time
+```
+
+This is the part of the limit that can actually be solved, and it is the part
+the benchmark cannot see: the benchmark has no history. It works on the
+requests this machine has actually been asked.
+
 `router ensure` is the loop that closes the catalogue: when a need names no
 capability the router knows, it searches GitHub for a `SKILL.md`, screens the
 candidates, runs each survivor against the 298-case benchmark, and mints the

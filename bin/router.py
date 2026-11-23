@@ -123,6 +123,7 @@ def cmd_ask(args):
     else:
         cands, caps = inv.score_candidates(reg, args.need, cap_map)
         cands = inv.cost_gate(cands, args.cheap_cap)
+    prec = apply_precedent(cands, args.need, reg)
     if not cands:
         print("no skill in the catalogue matches this need.")
         print("try: router fetch \"%s\"" % args.need)
@@ -132,6 +133,7 @@ def cmd_ask(args):
         print(json.dumps({
             "need": args.need,
             "semantic": info,
+            "precedent": prec,
             "results": [{
                 "name": c.get("name"),
                 "slug": c.get("slug"),
@@ -156,12 +158,64 @@ def cmd_ask(args):
               % (info.get("rescued") or "no", info.get("neighbours")))
     elif info.get("reason"):
         print("semantic: off (%s)" % info["reason"])
+    if prec.get("skill"):
+        print("precedent: %s (used before, match %.2f)" % (prec["skill"], prec["score"]))
     if len(top) > 1:
         print("others  :")
         for c in top[1:]:
             print("          %-38s %-10s %5s tok  match %s"
                   % (c.get("name"), c.get("source"), inv.tokens_of(c), c.get("_match")))
     return 0
+
+
+PRECEDENT_BONUS = 8
+
+
+def apply_precedent(cands, need, reg=None):
+    """Let what was used last time break a tie between interchangeable skills.
+
+    Two skills can both answer "generate a changelog" and no matching can
+    say which one the user means. The learning hook records the request and
+    the skill that was loaded for it, so this is history, not a guess.
+
+    A skill the matcher dropped entirely is put back: the precedent is
+    stronger evidence than the matcher's silence.
+    """
+    path = SKILL_SCRIPTS / "precedent.py"
+    if not path.is_file():
+        return {}
+    spec = importlib.util.spec_from_file_location("aswath_precedent", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    hit = mod.lookup(need)
+    if not hit:
+        return {}
+    skill = hit["skill"]
+    for c in cands:
+        if c.get("name") == skill:
+            c["_match"] = c.get("_match", 0) + PRECEDENT_BONUS
+            hit["applied"] = True
+            break
+    else:
+        # The matcher dropped it. If it is installed, the precedent puts it
+        # back at the top: history is better evidence than a zero score.
+        for group in ("local", "plugin", "marketplace"):
+            for s in (reg or {}).get(group) or []:
+                if s.get("name") == skill:
+                    item = dict(s)
+                    item["_match"] = PRECEDENT_BONUS
+                    item["_caps"] = []
+                    item["_cap_overlap"] = 0
+                    cands.insert(0, item)
+                    hit["applied"] = True
+                    hit["restored"] = True
+                    break
+            if hit.get("applied"):
+                break
+        else:
+            hit["installed"] = False
+    cands.sort(key=lambda c: -c.get("_match", 0))
+    return hit
 
 
 def semantic_layer():
@@ -173,6 +227,34 @@ def semantic_layer():
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
+
+
+def cmd_precedent(args):
+    """Show the history behind a request: which skill was used last time."""
+    path = SKILL_SCRIPTS / "precedent.py"
+    if not path.is_file():
+        raise SystemExit("precedent store not installed")
+    spec = importlib.util.spec_from_file_location("aswath_precedent", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    if not args.request:
+        rows = mod.observations()
+        loads = [r for r in rows if r.get("outcome") == "load"]
+        pairs = mod.precedents()
+        print("observations  : %d" % len(rows))
+        print("skill loads   : %d" % len(loads))
+        print("distinct asks : %d" % len(pairs))
+        for req, skills in list(pairs.items())[:15]:
+            print("  %-56s %s" % (req[:56], ", ".join(sorted(skills))))
+        return 0
+    hit = mod.lookup(args.request, args.threshold)
+    if not hit:
+        print("no precedent for that request")
+        return 1
+    print("skill   : %s" % hit["skill"])
+    print("match   : %.2f" % hit["score"])
+    print("before  : %s" % (hit.get("request") or "")[:140])
+    return 0
 
 
 def cmd_sem(args):
@@ -357,6 +439,11 @@ def main(argv=None):
     p.add_argument("--source")
     p.add_argument("--install", action="store_true")
     p.set_defaults(func=cmd_forge)
+
+    p = sub.add_parser("precedent", help="what the last time used, for this request")
+    p.add_argument("request", nargs="?", default="")
+    p.add_argument("--threshold", type=float, default=0.6)
+    p.set_defaults(func=cmd_precedent)
 
     p = sub.add_parser("sem", help="the semantic layer")
     p.add_argument("action", nargs="?", default="status",
