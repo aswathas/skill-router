@@ -59,3 +59,21 @@ Every file changed in a range appears exactly once here, including these docs.
 | `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
 | `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |
 | `BUILDLOG.md` | Added the 2026-11-24 entry | The running narrative | Read back; the entry names the branch, the change and the verification |
+
+## 2026-11-24 — precedent routing
+
+| File | What changed | Why | How tested |
+|---|---|---|---|
+| `plugins/aswath-skill-router/scripts/learning-hook.py` | A skill load now writes a `load` observation carrying the request text, next to the accept/reject rows. The load does not touch the ledger score | The hook already saw the request and the loaded skill and was discarding the pairing. That pairing is the only thing that can tell two interchangeable skills apart | Simulated `UserPromptSubmit` + `PostToolUse(Skill)` run through the installed hook writes one `load` row with the request in it |
+| `plugins/aswath-skill-router/.claude-plugin/plugin.json` | `version` 0.1.2 -> 0.1.3 | The shared hook file changed, so the manifest must not describe old contents | Grep shows `"version": "0.1.3"`; JSON parses |
+| `plugins/aswath-skill-router/.minimax-plugin/plugin.json` | `version` 0.1.2 -> 0.1.3 | Same file, same reason | Grep shows `"version": "0.1.3"`; JSON parses |
+| `.claude-plugin/marketplace.json` | Plugin entry `version` 0.1.2 -> 0.1.3 | The marketplace entry pins the version a machine installs | Grep shows `"version": "0.1.3"`; JSON parses |
+| `skills/aswath-capability/scripts/precedent.py` | New: reads the recorded pairs, answers which skill was used last time for a request like this one, and reports the match | Sibling choices need history, not matching | `pytest tests` -> 58 passed; `precedent.py stats` and `lookup` read the store back |
+| `skills/aswath-capability/scripts/semantic.py` | No change to the layer; the file was reviewed and left as measured | The semantic layer and the precedent store are separate mechanisms | `evals/run_semantic_eval.py` unchanged: 0.805 capability, 0.222 strict, 2096 cost |
+| `bin/router.py` | `ask` applies the precedent: a bonus of 8 for the skill used before, and the skill is re-inserted if the matcher dropped it. New `router precedent` command | The mechanism has to be reachable from the command the user already uses | `router ask "bump the version and publish the release notes for the plugin"` -> `version-bump` with the precedent line; `router precedent` lists the pairs |
+| `tests/test_precedent.py` | New: four tests over the load-to-precedent path, the accept-is-not-precedent rule, the unrelated-request case and the filler-word similarity | The store decides between interchangeable skills, so its rules need pinning | `pytest tests` -> 58 passed |
+| `README.md` | Added the precedent section: what it is, why the limit needs it, and the commands | The feature only pays off if it is known | The commands match the implementation |
+| `docs/reviews/decision-log.md` | Added D14 | Contract requires every decision to be written down | Read back; the entry names the decomposition, the rejected options and the evidence |
+| `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
+| `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |
+| `BUILDLOG.md` | Added the 2026-11-24 entry | The running narrative | Read back; the entry names the branch, the change and the verification |

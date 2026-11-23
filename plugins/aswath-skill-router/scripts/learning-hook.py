@@ -126,7 +126,7 @@ def record(skill, outcome, note):
     atomic_write(ledger_path(), led)
 
 
-def observe(skill, outcome, note, session):
+def observe(skill, outcome, note, session, request=None):
     """Record the outcome and log the raw event."""
     d = state_dir()
     try:
@@ -138,10 +138,26 @@ def observe(skill, outcome, note, session):
                 "skill": skill,
                 "outcome": outcome,
                 "note": note,
+                "request": request,
             }, ensure_ascii=False) + "\n")
     except Exception:
         pass
     record(skill, outcome, note)
+
+
+def observe_load(skill, session, request):
+    """A skill was loaded for a request. Precedent, not an outcome.
+
+    This is the only durable link between what the user asked and which
+    skill was used. Without it the router cannot learn that "generate a
+    changelog" means changelog-generator rather than version-bump: the
+    skill name is not in the request, and two skills can answer it.
+    A load is not an accept - the work may still fail - so it does not
+    touch the ledger score, it only records the precedent.
+    """
+    if not skill:
+        return
+    observe(skill, "load", "live: skill loaded for this request", session, request)
 
 
 def session_file(session):
@@ -185,6 +201,7 @@ def main():
                 st["skill"] = name or None
                 st["files"] = []
                 atomic_write(session_file(session), st)
+                observe_load(name, session, st.get("request"))
                 return 0
 
             skill = st.get("skill")

@@ -135,3 +135,28 @@ git history; each entry below names the branch, the change and how it was verifi
 - Where: `aswathas/skill-router`, branch `feat/semantic-layer`.
 - Records: `docs/reviews/decision-log.md` (D12-D13), `docs/reviews/change-inventory.md`,
   `docs/reviews/prompts.md`.
+
+## 2026-11-24 — the last wall: precedent
+
+- What:
+  - The learning hook writes a `load` observation carrying the request and the
+    skill that was loaded. The pairing was already in the hook's hands and was
+    being thrown away.
+  - `scripts/precedent.py` reads those rows and answers which skill was used
+    last time for a request like this one.
+  - `router ask` gives that skill a bonus of 8 and re-inserts it if the matcher
+    dropped it. `router precedent` shows the history.
+- Why: the strict-subset failures are sibling choices, not matching failures.
+  25 of 63 expected skills are not installed on this machine, so the ceiling is
+  0.603. Of the 38 installed, the keyword router is right in 13 cases, the
+  semantic one in 12, and their union is 14 - there is no combined headroom.
+  Only history distinguishes two interchangeable skills.
+- Verified:
+  - `pytest tests` -> 58 passed.
+  - Simulated hook run -> one `load` row with the request in it; the store
+    reads it back; `router ask` picks the skill that was used before and says
+    so.
+  - The plugin version moved to 0.1.3 because the shared hook file changed.
+- Where: `aswathas/skill-router`, branch `feat/precedent-routing`.
+- Records: `docs/reviews/decision-log.md` (D14), `docs/reviews/change-inventory.md`,
+  `docs/reviews/prompts.md`.

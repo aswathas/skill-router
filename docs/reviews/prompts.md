@@ -75,3 +75,11 @@ repo, so the record is written by hand here.
   `skills/aswath-capability/scripts/semantic.py`,
   `evals/run_semantic_eval.py`, `evals/exp_semantic.py`, `evals/exp_grid.py`,
   `tests/test_semantic.py`, the `router sem` commands, and the records above.
+
+## 2026-11-24 — solving the strict limit with precedent
+- Prompt: "solv eit fully >?"
+- Decision it produced: D14 (the hook records the request/skill pairing, the
+  router uses it) and D3 in the aswath-skills repo.
+- Work it caused: the `load` observation in the learning hook, the three
+  version bumps, `scripts/precedent.py`, the precedent in `router ask`, the
+  `router precedent` command, `tests/test_precedent.py`, and the records above.

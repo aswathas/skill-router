@@ -317,3 +317,35 @@ decision and the command that proves it.
   0.96 s cold and 0.000 s warm; `router ask` answers in 0.31 s.
 - Consequence: the index is cheap enough to keep on disk and use on every
   request.
+
+## D14 — Precedent routing: the hook records the pairing, the router uses it
+- Date: 2026-11-24
+- Prompt: "solv eit fully >?"
+- Context: the last wall on the strict subset is not a matching problem. On
+  this machine 25 of the 63 strict expectations are for skills that are not
+  installed at all, so the ceiling is 0.603. Of the 38 that are installed, the
+  keyword router picks the right one in 13 cases, the semantic one in 12, and
+  the union of the two is 14 - the signals agree on the same cases, so no
+  combination of them can go further. The failures are sibling choices
+  between interchangeable skills, and only history says which twin the user
+  means.
+- Options:
+  - Keep tuning the matcher - the semantic-lead path was measured and left
+    strict top-1 unchanged while costing capability top-1 0.805 -> 0.779.
+  - Prefer local over marketplace, or plugin over marketplace - there is no
+    bias to exploit: the expected skill is local in 33 of the 38 installed
+    cases and the chosen one is local in 30.
+  - Record the pairing the hook already sees - the hook had the request text
+    and the loaded skill and was writing down neither.
+- Chosen: the hook now writes a `load` row carrying the request and the skill;
+  `scripts/precedent.py` reads those rows; the router gives the skill that was
+  used before a bonus of 8, and re-inserts it if the matcher dropped it
+  entirely. A load is precedent, not an outcome: it never touches the ledger
+  score, so it cannot inflate a skill that has not proven itself.
+- Evidence: `router ask "bump the version and publish the release notes for the
+  plugin"` -> `version-bump`, with `precedent: version-bump (used before, match
+  1.00)`; `router precedent` lists the pairs; the simulated hook run writes one
+  `load` row and the store reads it back; `pytest tests` -> 58 passed.
+- Consequence: the part of the limit that can be solved is solved, and it is
+  the part the benchmark cannot see, because the benchmark has no history. It
+  works on the requests this machine has actually been asked.
