@@ -45,6 +45,36 @@ over the whole benchmark from 0.661 to 0.849 (p = 3.2e-15); see
 
 ---
 
+## The command
+
+One CLI, every harness. It imports the shipped ranker, so it cannot drift from it.
+
+```
+router ask "build me a landing page"      # one skill, and why
+router why pdf                            # why that skill, in detail
+router list --cap design-direction        # the catalogue, filtered
+router learn                              # what the outcome ledger is worth right now
+router rebuild                            # re-index the installed skills
+router eval                               # the benchmark, written to evals/local/
+router ensure "detect memory leaks in rust"  # find or fetch a skill for the need
+router park status --root claude          # what parking would move
+```
+
+`router ensure` is the loop that closes the catalogue: when a need names no
+capability the router knows, it searches GitHub for a `SKILL.md`, screens the
+candidates, runs each survivor against the 298-case benchmark, and mints the
+winner into `aswath-skills` as `aswath-<slug>` — our naming, our description
+rule, our category rule, with the origin recorded.
+
+Install it with two files on `PATH`:
+
+```
+~/bin/router      -> exec python "$HOME/Projects/skill-router/bin/router.py" "$@"
+~/bin/router.cmd  -> python "%USERPROFILE%\Projects\skill-router\bin\router.py" %*
+```
+
+---
+
 ## What's new here
 
 This is not a new learning algorithm. It is a decomposition, a taxonomy

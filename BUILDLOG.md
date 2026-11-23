@@ -62,3 +62,42 @@ git history; each entry below names the branch, the change and how it was verifi
 - Records: `docs/reviews/decision-log.md` (D7), `docs/reviews/change-inventory.md`,
   `docs/reviews/prompts.md`.
 
+
+## 2026-11-23 — the router becomes a command, and the ledger starts counting
+
+- What:
+  - `bin/router.py`, the CLI: `ask`, `why`, `list`, `learn`, `rebuild`, `eval`,
+    `fetch`, `test`, `ensure`, `forge`, `park`. It imports the shipped ranker, so it
+    cannot drift from it.
+  - The ledger now folds into the score. `build-registry.py` read a dict where a
+    number belonged, so `quality` was always 0 and the outcome ledger never moved a
+    ranking. Accept +10, reject -50, partial +2, applied live at query time and
+    written into the registry at rebuild time.
+  - `router ensure` closes the loop the user asked for: a need the catalogue cannot
+    answer is searched for on GitHub, the candidates are screened, each survivor is
+    run against the 298-case benchmark, and the winner is minted into `aswath-skills`
+    as `aswath-<slug>` with a `Use when` description, an origin line, a manifest row,
+    a README row and a re-run of `install.ps1`.
+  - `bin/park-skills.py` gained `--root`, so parking works on the Claude root as well
+    as the MiniMax one, and the keep set now protects the skills the session depends
+    on by name.
+  - `evals/run_eval.py` writes its markdown beside its json, so a local run cannot
+    overwrite the evidence the paper quotes.
+- Why: the router was real but not usable — no command, a stale registry, a ledger
+  that could not change a decision, and no way to answer a need the catalogue did not
+  already cover.
+- Verified:
+  - `pytest tests` -> 47 passed.
+  - `router ask "roast this UI and fix it"` -> `design-taste-frontend`;
+    `router ask "write a python script that parses csv"` -> `aswath-csvjson`.
+  - `router ensure "detect and fix memory leaks in a rust binary"` -> fetched
+    `claude-dev-suite/claude-dev-suite`, judged `rust-security` (wins the need, 1 case
+    stolen of 298), forged it into
+    `C:\Users\ADMIN\Projects\aswath-skills-wk\skills\utilities\aswath-rust-security`,
+    and `install.ps1` linked it into `~/.claude/skills` and `~/.agents/skills`.
+  - `router ask "rust security vulnerabilities cargo audit"` -> `aswath-rust-security`.
+  - Benchmark on this machine (3,261 skills in the catalogue): top-1 0.805, MRR 0.833.
+    The paper's 0.849 was measured on a 4,225-skill catalogue on another machine.
+- Where: `aswathas/skill-router`, branch `feat/router-cli`.
+- Records: `docs/reviews/decision-log.md` (D8-D11), `docs/reviews/change-inventory.md`,
+  `docs/reviews/prompts.md`.

@@ -49,20 +49,53 @@ def data_dir(home=None):
     return base / '.minimax'
 
 
-def skills_dir(home=None):
-    return data_dir(home) / 'skills'
+# Each harness root the catalogue can be parked in. The agent only scans the
+# live directory, so a parked skill is one the agent cannot see until it is
+# restored. Nothing is deleted: parking is a move.
+ROOTS = {
+    'minimax': ('.minimax', 'skills', 'skills-off'),
+    'claude': ('.claude', 'skills', 'skills-off'),
+    'agents': ('.agents', 'skills', 'skills-off'),
+}
 
 
-def parked_dir(home=None):
-    return data_dir(home) / 'skills-off'
+def root_paths(root, home=None):
+    base = Path(home) if home else Path.home()
+    folder, live, off = ROOTS[root]
+    return base / folder / live, base / folder / off
 
 
-def manifest_path(home=None):
-    return data_dir(home) / 'skills-off-manifest.json'
+def skills_dir(home=None, root='minimax'):
+    return root_paths(root, home)[0]
 
 
-def load_manifest(home=None):
-    p = manifest_path(home)
+def parked_dir(home=None, root='minimax'):
+    return root_paths(root, home)[1]
+
+
+def manifest_path(home=None, root='minimax'):
+    live, off = root_paths(root, home)
+    return off.parent / (off.name + '-manifest.json')
+
+
+# Skills the session depends on by name. Parking one of these breaks the
+# harness, so they stay.
+EXTRA_KEEP = {
+    'caveman', 'ponytail', 'ultracave', 'update-config', 'init', 'run',
+    'code-review', 'simplify', 'security-review', 'loop',
+    'requesting-code-review', 'fewer-permission-prompts', 'keybindings-help',
+    'superpowers', 'dataviz', 'pdf',
+}
+
+
+def keep_set(root='minimax'):
+    keep = set(KEEP) | EXTRA_KEEP
+    keep |= {s for s in KEEP if s.startswith('aswath-')}
+    return keep
+
+
+def load_manifest(home=None, root='minimax'):
+    p = manifest_path(home, root)
     if not p.is_file():
         return {'parked_at': None, 'skills': []}
     try:
@@ -71,36 +104,39 @@ def load_manifest(home=None):
         return {'parked_at': None, 'skills': []}
 
 
-def save_manifest(data, home=None):
-    p = manifest_path(home)
+def save_manifest(data, home=None, root='minimax'):
+    p = manifest_path(home, root)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(data, indent=1), encoding='utf-8')
 
 
-def cmd_status(home):
-    on = skills_dir(home)
-    off = parked_dir(home)
+def cmd_status(home, root):
+    on = skills_dir(home, root)
+    off = parked_dir(home, root)
+    keep = keep_set(root)
     installed = sorted([d.name for d in on.iterdir() if d.is_dir()]) if on.is_dir() else []
     parked = sorted([d.name for d in off.iterdir() if d.is_dir()]) if off.is_dir() else []
-    keep_here = [s for s in installed if s in KEEP]
-    print('data dir   : %s' % data_dir(home))
-    print('installed  : %d directories' % len(installed))
-    print('  keep set : %d -> %s' % (len(keep_here), ', '.join(keep_here)))
-    print('  to park  : %d' % len([s for s in installed if s not in KEEP]))
+    keep_here = [s for s in installed if s in keep or s.startswith('aswath-')]
+    print('root       : %s' % root)
+    print('installed  : %d directories in %s' % (len(installed), on))
+    print('  keep     : %d -> %s' % (len(keep_here), ', '.join(keep_here)))
+    print('  to park  : %d' % len([s for s in installed
+                                  if s not in keep and not s.startswith('aswath-')]))
     print('parked     : %d directories in %s' % (len(parked), off))
-    man = load_manifest(home)
+    man = load_manifest(home, root)
     if man.get('parked_at'):
         print('last park  : %s' % man['parked_at'])
     return 0
 
 
-def cmd_park(home, dry_run):
-    on = skills_dir(home)
-    off = parked_dir(home)
+def cmd_park(home, root, dry_run):
+    on = skills_dir(home, root)
+    off = parked_dir(home, root)
+    keep = keep_set(root)
     if not on.is_dir():
         raise SystemExit('no skills directory at %s' % on)
     movable = [d for d in sorted(on.iterdir())
-               if d.is_dir() and d.name not in KEEP]
+               if d.is_dir() and d.name not in keep and not d.name.startswith('aswath-')]
     if dry_run:
         print('would park %d directories' % len(movable))
         for d in movable:
@@ -115,21 +151,21 @@ def cmd_park(home, dry_run):
             continue
         shutil.move(str(d), str(target))
         moved.append(d.name)
-    man = load_manifest(home)
+    man = load_manifest(home, root)
     man['parked_at'] = time.strftime('%Y-%m-%dT%H:%M:%S')
     man.setdefault('skills', [])
     for name in moved:
         if name not in man['skills']:
             man['skills'].append(name)
-    save_manifest(man, home)
+    save_manifest(man, home, root)
     print('parked %d directories into %s' % (len(moved), off))
     print('kept %d in %s' % (len([d for d in on.iterdir() if d.is_dir()]), on))
     return 0
 
 
-def cmd_restore(home, name, dry_run):
-    on = skills_dir(home)
-    off = parked_dir(home)
+def cmd_restore(home, root, name, dry_run):
+    on = skills_dir(home, root)
+    off = parked_dir(home, root)
     src = off / name
     if not src.is_dir():
         raise SystemExit('%s is not parked' % name)
@@ -138,16 +174,16 @@ def cmd_restore(home, name, dry_run):
         return 0
     on.mkdir(parents=True, exist_ok=True)
     shutil.move(str(src), str(on / name))
-    man = load_manifest(home)
+    man = load_manifest(home, root)
     man['skills'] = [s for s in man.get('skills', []) if s != name]
-    save_manifest(man, home)
+    save_manifest(man, home, root)
     print('restored %s' % name)
     return 0
 
 
-def cmd_restore_all(home, dry_run):
-    on = skills_dir(home)
-    off = parked_dir(home)
+def cmd_restore_all(home, root, dry_run):
+    on = skills_dir(home, root)
+    off = parked_dir(home, root)
     if not off.is_dir():
         print('nothing parked')
         return 0
@@ -158,10 +194,10 @@ def cmd_restore_all(home, dry_run):
     on.mkdir(parents=True, exist_ok=True)
     for name in names:
         shutil.move(str(off / name), str(on / name))
-    man = load_manifest(home)
+    man = load_manifest(home, root)
     man['parked_at'] = None
     man['skills'] = []
-    save_manifest(man, home)
+    save_manifest(man, home, root)
     print('restored %d directories' % len(names))
     return 0
 
@@ -169,6 +205,7 @@ def cmd_restore_all(home, dry_run):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--home', default=None)
+    ap.add_argument('--root', default='minimax', choices=sorted(ROOTS))
     ap.add_argument('--dry-run', action='store_true')
     sub = ap.add_subparsers(dest='cmd', required=True)
     sub.add_parser('status')
@@ -178,9 +215,11 @@ def main():
     args = ap.parse_args()
     fn = {'status': cmd_status, 'park': cmd_park,
           'restore': cmd_restore, 'restore-all': cmd_restore_all}[args.cmd]
-    if args.cmd in ('status', 'park', 'restore-all'):
-        return fn(args.home, args.dry_run) if args.cmd != 'status' else fn(args.home)
-    return fn(args.home, args.name, args.dry_run)
+    if args.cmd == 'status':
+        return fn(args.home, args.root)
+    if args.cmd == 'restore':
+        return fn(args.home, args.root, args.name, args.dry_run)
+    return fn(args.home, args.root, args.dry_run)
 
 
 if __name__ == '__main__':

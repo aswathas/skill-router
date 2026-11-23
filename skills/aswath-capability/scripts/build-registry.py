@@ -468,9 +468,28 @@ def load_ledger(home):
     if not p.is_file():
         return {}
     try:
-        return json.loads(p.read_text(encoding="utf-8")).get("skills", {})
+        data = json.loads(p.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
+    # The ledger stores outcomes as counts per skill; the registry wants one
+    # number per skill. Folding happens here. A reject must hurt more than an
+    # accept helps, or a skill the user keeps rejecting stays competitive.
+    # The counts used to be handed over unflattened, so every entry carried a
+    # dict where a number belonged and the ledger never moved a ranking.
+    raw = data.get("skills", data)
+    out = {}
+    for key, rec in (raw or {}).items():
+        if isinstance(rec, (int, float)):
+            out[key] = rec
+            continue
+        if not isinstance(rec, dict):
+            continue
+        score = (rec.get("accepts", 0) * 10
+                 - rec.get("rejects", 0) * 50
+                 + rec.get("partials", 0) * 2)
+        if score:
+            out[key] = score
+    return out
 
 
 def main():
@@ -511,8 +530,8 @@ def main():
         m["tags"] = tag_capabilities(blob, m.get("name", ""), cap_map)
 
     # Merge quality scores from the ledger.
-    for entry in local + market:
-        score = ledger.get(entry["name"])
+    for entry in local + plugin_skills + market:
+        score = ledger.get(entry["name"]) or ledger.get(slugify(entry.get("name", "")))
         if score:
             entry["quality"] = score
 

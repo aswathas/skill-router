@@ -528,8 +528,11 @@ def main():
            "| capability | n | accuracy |", "|---|---|---|"]
     for cap, d in sorted(results["per_capability"].items(), key=lambda kv: kv[1]["acc"]):
         md.append("| %s | %d | %.3f |" % (cap, d["n"], d["acc"]))
-    (HERE / "results.md").write_text("\n".join(md) + "\n", encoding="utf-8")
-    print("wrote", HERE / "results.md")
+    # The markdown lands beside the json it describes, so a run that writes
+    # somewhere else cannot overwrite the committed evidence the paper quotes.
+    md_path = Path(args.out).parent / "results.md"
+    md_path.write_text("\n".join(md) + "\n", encoding="utf-8")
+    print("wrote", md_path)
 
 
 if __name__ == "__main__":
