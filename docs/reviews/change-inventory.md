@@ -79,3 +79,17 @@ Every file changed in a range appears exactly once here, including these docs.
 | `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
 | `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |
 | `BUILDLOG.md` | Added the 2026-11-24 entry | The running narrative | Read back; the entry names the branch, the change and the verification |
+
+## 2026-11-24 — one ranking path, and the load rule
+
+| File | What changed | Why | How tested |
+|---|---|---|---|
+| `plugins/aswath-skill-router/scripts/learning-hook.py` | `observe()` takes `count`; the load row is written with `count=False`, so it records the request and the skill without touching the ledger score | A load says which skill was used, not whether it worked. Counting it as a partial outcome inflated a score by +2 per load | `tests/test_learning_hook.py`: a load leaves accepts, partials and score at zero; an edit after a load is an accept; a delete of what the skill produced is a reject |
+| `plugins/aswath-skill-router/.claude-plugin/plugin.json` | `version` 0.1.3 -> 0.1.4 | The shared hook file changed after 0.1.3 was published, so the manifest must not describe old contents | Grep shows `"version": "0.1.4"`; JSON parses |
+| `plugins/aswath-skill-router/.minimax-plugin/plugin.json` | `version` 0.1.3 -> 0.1.4 | Same file, same reason | Grep shows `"version": "0.1.4"`; JSON parses |
+| `.claude-plugin/marketplace.json` | Plugin entry `version` 0.1.3 -> 0.1.4 | The marketplace entry pins the version a machine installs | Grep shows `"version": "0.1.4"`; JSON parses |
+| `bin/router.py` | `rank_all()` is the single ranking path; `ask`, `why` and `ensure` all use it, so the router cannot explain one answer and give another | Three commands each had their own path | `router ask`, `router why version-bump` and `router ensure` return the same skill for the same request |
+| `tests/test_learning_hook.py` | New: three tests over the load, accept and reject rules of the hook | The hook's rules decide what the ledger believes | `pytest tests` -> 62 passed |
+| `docs/reviews/decision-log.md` | Added D15 | Contract requires every decision to be written down | Read back; the entry names the two loose ends, the options and the evidence |
+| `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
+| `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |

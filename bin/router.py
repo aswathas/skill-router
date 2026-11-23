@@ -110,20 +110,32 @@ def load_caps(inv):
 
 
 # --- commands ------------------------------------------------------------
+def rank_all(reg, cap_map, need):
+    """One ranking path for every command: semantic layer, then precedent.
+
+    `ask`, `why` and `ensure` must agree, or the router explains one answer
+    and gives another.
+    """
+    inv = invoke()
+    semantic = semantic_layer()
+    info = {}
+    if semantic is not None and semantic.enabled():
+        cands, info = semantic.rank(reg, cap_map, need)
+    else:
+        cands, _ = inv.score_candidates(reg, need, cap_map)
+        cands = inv.cost_gate(cands, 4.0)
+        info = {"semantic": False, "reason": "semantic layer off"}
+    prec = apply_precedent(cands, need, reg)
+    return cands, info, prec
+
+
 def cmd_ask(args):
     inv = invoke()
     reg = load_registry()
     cap_map = load_caps(inv)
-    semantic = semantic_layer()
-    info = {}
-    if semantic is not None and semantic.enabled():
-        cands, info = semantic.rank(reg, cap_map, args.need)
-        if args.cheap_cap:
-            cands = inv.cost_gate(cands, args.cheap_cap)
-    else:
-        cands, caps = inv.score_candidates(reg, args.need, cap_map)
+    cands, info, prec = rank_all(reg, cap_map, args.need)
+    if args.cheap_cap:
         cands = inv.cost_gate(cands, args.cheap_cap)
-    prec = apply_precedent(cands, args.need, reg)
     if not cands:
         print("no skill in the catalogue matches this need.")
         print("try: router fetch \"%s\"" % args.need)
@@ -291,13 +303,23 @@ def cmd_why(args):
     inv = invoke()
     reg = load_registry()
     cap_map = load_caps(inv)
-    cands, _ = inv.score_candidates(reg, args.skill, cap_map)
+    cands, info, prec = rank_all(reg, cap_map, args.skill)
     hit = None
     for c in cands:
         if (c.get("slug") == args.skill or c.get("name") == args.skill
                 or (c.get("name") or "").lower() == args.skill.lower()):
             hit = c
             break
+    if hit is None:
+        for group in ("local", "plugin", "marketplace"):
+            for c in reg.get(group) or []:
+                if (c.get("slug") == args.skill or c.get("name") == args.skill
+                        or (c.get("name") or "").lower() == args.skill.lower()):
+                    hit = dict(c)
+                    hit["_match"] = 0
+                    break
+            if hit:
+                break
     if hit is None:
         print("skill not in the registry: %s" % args.skill)
         return 2
@@ -699,12 +721,15 @@ def cmd_ensure(args):
     weights = inv.infer_capabilities(args.need, cap_map)
     strong = [c for c, (w, _) in weights.items() if w >= 2]
     reg = load_registry()
-    cands = inv.score_candidates(reg, args.need, cap_map)[0]
+    cands, info, prec = rank_all(reg, cap_map, args.need)
     best = cands[0] if cands else None
-    if strong and best is not None:
+    if best is not None and (strong or info.get("semantic") or prec.get("skill")):
         print("skill   : %s" % best.get("name"))
         print("why     : capability %s" % ",".join(best.get("_caps") or []))
         print("path    : %s" % (best.get("path") or "-"))
+        if prec.get("skill"):
+            print("precedent: %s (used before, match %.2f)"
+                  % (prec["skill"], prec["score"]))
         return 0
     print("no installed skill names this need.")
     print("capabilities named: %s" % (", ".join(sorted(weights)) or "none"))

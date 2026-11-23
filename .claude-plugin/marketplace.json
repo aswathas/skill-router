@@ -8,7 +8,7 @@
     {
       "name": "aswath-skill-router",
       "source": "./plugins/aswath-skill-router",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "description": "Learns which skill a request actually needs from what really happens in a session - the ask, the edits, the corrections, the deletes - and feeds that back into the capability router so the same mistake is not made twice.",
       "author": {
         "name": "aswathas",

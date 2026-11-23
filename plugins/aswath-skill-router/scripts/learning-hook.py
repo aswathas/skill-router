@@ -126,8 +126,13 @@ def record(skill, outcome, note):
     atomic_write(ledger_path(), led)
 
 
-def observe(skill, outcome, note, session, request=None):
-    """Record the outcome and log the raw event."""
+def observe(skill, outcome, note, session, request=None, count=True):
+    """Record the outcome and log the raw event.
+
+    count=False logs the event without touching the ledger score. A load is
+    precedent, not an outcome: it says which skill was used for a request,
+    and says nothing about whether it worked.
+    """
     d = state_dir()
     try:
         d.mkdir(parents=True, exist_ok=True)
@@ -142,7 +147,8 @@ def observe(skill, outcome, note, session, request=None):
             }, ensure_ascii=False) + "\n")
     except Exception:
         pass
-    record(skill, outcome, note)
+    if count:
+        record(skill, outcome, note)
 
 
 def observe_load(skill, session, request):
@@ -157,7 +163,8 @@ def observe_load(skill, session, request):
     """
     if not skill:
         return
-    observe(skill, "load", "live: skill loaded for this request", session, request)
+    observe(skill, "load", "live: skill loaded for this request", session,
+            request, count=False)
 
 
 def session_file(session):
