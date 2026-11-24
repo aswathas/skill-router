@@ -91,3 +91,9 @@ repo, so the record is written by hand here.
 - Work it caused: `rank_all()` in `bin/router.py`, `observe(..., count=False)`
   in the learning hook, `tests/test_learning_hook.py`, `tests/test_sync.py`, the
   version bumps in the three manifests, and the records above.
+
+## 2026-11-24 — the name anchor, refused
+- Prompt: "push everything solve everything and push"
+- Decision it produced: D16 (no name anchor; precedent handles the case).
+- Work it caused: the two measurements, and the revert of
+  `skills/aswath-capability/scripts/semantic.py`. Net file change: none.

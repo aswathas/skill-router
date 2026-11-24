@@ -93,3 +93,12 @@ Every file changed in a range appears exactly once here, including these docs.
 | `docs/reviews/decision-log.md` | Added D15 | Contract requires every decision to be written down | Read back; the entry names the two loose ends, the options and the evidence |
 | `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
 | `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |
+
+## 2026-11-24 — the name anchor, measured and reverted
+
+| File | What changed | Why | How tested |
+|---|---|---|---|
+| `docs/reviews/decision-log.md` | Added D16 | A design that was measured and refused belongs in the log, so it is not tried a third time | Read back; both measurements and the revert are named |
+| `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
+| `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |
+| `skills/aswath-capability/scripts/semantic.py` | Net change: none. The name anchor was implemented, measured and reverted | The anchor was measured twice: applied to every skill it cost capability top-1 0.805 -> 0.742, and restricted to the skills the taxonomy ignored it cost 0.805 -> 0.711 | The file is byte-identical to the merged version; `evals/run_semantic_eval.py` reports 0.805 / 0.222 / 2096, unchanged |

@@ -373,3 +373,39 @@ decision and the command that proves it.
 - Consequence: the CLI has one ranking path, and precedent can never inflate a
   skill's quality score. The plugin moves to 0.1.4 because the shared hook file
   changed after 0.1.3 was published.
+
+## D16 — The name anchor, tried twice and refused both times
+- Date: 2026-11-24
+- Prompt: "push everything solve everything and push"
+- Context: a real case showed the router's remaining weakness plainly.
+  "bump the version and publish the release notes for the plugin" answers
+  `release`, not `version-bump`: the taxonomy inferred one capability
+  (`deployment`), `version-bump` carries none of it, and the capability layer
+  decided before the name was read. The obvious fix is to let a rare word in
+  the request that appears in a skill's name promote that skill.
+- What was tried:
+  - **Anchor applied to every skill** (the first attempt, in the ranker
+    itself): capability top-1 0.805 -> **0.742**, strict top-1 unchanged at
+    0.206. A rare name word pulls in wrong skills as often as right ones.
+  - **Anchor applied only to the skills the taxonomy ignored** (capability
+    overlap zero), which cannot outvote the taxonomy and can only rescue a
+    skill it dropped: capability top-1 0.805 -> **0.711**, strict 0.206 ->
+    0.190. Worse, and for the same reason: a skill the taxonomy ignored is
+    usually ignored for a reason.
+- Options:
+  - Keep the anchor and accept the loss - the capability layer is the
+    strongest signal in the system, and both measurements say the anchor is
+    not merely redundant but actively wrong.
+  - Let history decide instead - the precedent store records which skill was
+    used for a request like this one, and the router prefers it. It needs one
+    real use, not a guess about the words.
+- Chosen: no anchor. The second attempt was reverted; `semantic.py` carries
+  no anchor code. The case is left to precedent, which is the mechanism that
+  was measured to work on exactly this kind of question.
+- Evidence: both measurements are reproduced by the same harness over the
+  298 cases; after the revert `evals/run_semantic_eval.py` reports capability
+  top-1 0.805, strict 0.222, mean cost 2096, unchanged.
+- Consequence: the router keeps asking the same question and answering it
+  with the taxonomy. Where the taxonomy is wrong, the ledger and the
+  precedent store correct it over time, and a rejected skill stops being
+  offered.
