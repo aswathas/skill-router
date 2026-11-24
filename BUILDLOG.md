@@ -205,3 +205,23 @@ git history; each entry below names the branch, the change and how it was verifi
 - Where: `aswathas/skill-router`, branch `main`.
 - Records: `docs/reviews/decision-log.md` (D17-D18), `docs/reviews/change-inventory.md`,
   `docs/reviews/prompts.md`.
+
+## 2026-11-24 — the router steers
+
+- What: `bin/router-steer.py`, a UserPromptSubmit hook. It ranks the request
+  with the same path the command uses and prints one line naming the skill and
+  the runner-up. It says nothing when it has no confident answer, and never
+  blocks the prompt. `router hook install` writes the settings entry and backs
+  the file up; `router hook uninstall` removes it.
+- Why: the learning loop was automatic but the routing was not. Claude Code
+  picks a skill by its own judgement, and the router's answer sat unused
+  unless someone typed `router ask`.
+- Verified: simulated UserPromptSubmit payloads produce
+  `Skill router: fix-ci [ci-delivery]. Next: loop-on-ci.` and
+  `Skill router: gws-sheets [data]. Next: aswath-csvjson.`; the settings file
+  parses and the entry is found.
+- Not done: LM Studio at logon. The user said no. The semantic layer falls
+  back to the keyword path when the provider is not running.
+- Where: `aswathas/skill-router`, branch `main`.
+- Records: `docs/reviews/decision-log.md` (D18), `docs/reviews/change-inventory.md`,
+  `docs/reviews/prompts.md`.

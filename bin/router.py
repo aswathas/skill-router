@@ -269,6 +269,78 @@ def cmd_precedent(args):
     return 0
 
 
+HOOK_MARKER = "router-steer.py"
+# An absolute path, not %USERPROFILE%: the hook runs in whatever shell the
+# harness picks, and only an absolute path is the same in all of them.
+HOOK_COMMAND = 'python "%s"' % str((REPO / "bin" / "router-steer.py").resolve()).replace("\\", "/")
+
+
+def settings_path():
+    return Path.home() / ".claude" / "settings.json"
+
+
+def _read_settings():
+    p = settings_path()
+    if not p.is_file():
+        return {}
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def _write_settings(data):
+    p = settings_path()
+    p.parent.mkdir(parents=True, exist_ok=True)
+    backup = p.with_suffix(".json.bak-router")
+    if p.is_file():
+        backup.write_text(p.read_text(encoding="utf-8"), encoding="utf-8")
+    p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return backup
+
+
+def cmd_hook(args):
+    """Install or remove the steering hook in Claude Code's settings."""
+    data = _read_settings()
+    hooks = data.setdefault("hooks", {})
+    entries = hooks.setdefault("UserPromptSubmit", [])
+    have = [e for e in entries if HOOK_MARKER in json.dumps(e)]
+
+    if args.action == "status":
+        print("settings   : %s" % settings_path())
+        print("steering   : %s" % ("installed" if have else "not installed"))
+        for e in have:
+            for h in e.get("hooks", []):
+                print("  command  : %s" % h.get("command"))
+        return 0
+
+    if args.action == "uninstall":
+        if not have:
+            print("not installed")
+            return 0
+        entries[:] = [e for e in entries if HOOK_MARKER not in json.dumps(e)]
+        backup = _write_settings(data)
+        print("removed the steering hook")
+        print("backup    : %s" % backup)
+        return 0
+
+    if have:
+        print("already installed")
+        for e in have:
+            for h in e.get("hooks", []):
+                print("  command  : %s" % h.get("command"))
+        return 0
+    entries.append({
+        "matcher": "*",
+        "hooks": [{"type": "command", "command": HOOK_COMMAND, "timeout": 10}],
+    })
+    backup = _write_settings(data)
+    print("installed the steering hook into %s" % settings_path())
+    print("backup    : %s" % backup)
+    print("restart Claude Code for the hook to load")
+    return 0
+
+
 def cmd_sem(args):
     """Build the embedding index, show its state, or query it."""
     semantic = semantic_layer()
@@ -461,6 +533,11 @@ def main(argv=None):
     p.add_argument("--source")
     p.add_argument("--install", action="store_true")
     p.set_defaults(func=cmd_forge)
+
+    p = sub.add_parser("hook", help="the steering hook in Claude Code")
+    p.add_argument("action", nargs="?", default="status",
+                   choices=["status", "install", "uninstall"])
+    p.set_defaults(func=cmd_hook)
 
     p = sub.add_parser("precedent", help="what the last time used, for this request")
     p.add_argument("request", nargs="?", default="")

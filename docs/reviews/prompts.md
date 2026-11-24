@@ -113,3 +113,13 @@ repo, so the record is written by hand here.
   modules) and D4 in the aswath-skills repo.
 - Work it caused: `rank_with_router()` in `query-registry.py`, mirrored into
   both copies, and the records above.
+
+## 2026-11-24 — the steering hook
+- Prompt: "ok let me use and try is this automatically enable in my claude coee to use",
+  then "Build the steering hook (Recommended)" and "donot add it there doo not i reapeat"
+  for the LM Studio autostart.
+- Decision it produced: D18 (a UserPromptSubmit hook that attaches the
+  router's answer to every prompt) and the explicit decision not to add a
+  logon task for LM Studio.
+- Work it caused: `bin/router-steer.py`, `router hook install|uninstall|status`,
+  the settings entry in `~/.claude/settings.json`, and the records above.

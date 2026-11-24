@@ -120,3 +120,14 @@ Every file changed in a range appears exactly once here, including these docs.
 | `docs/reviews/decision-log.md` | Added D17 | Contract requires every decision to be written down | Read back; the entry names the drift, the options and the evidence |
 | `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
 | `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |
+
+## 2026-11-24 — the steering hook
+
+| File | What changed | Why | How tested |
+|---|---|---|---|
+| `bin/router-steer.py` | New: the UserPromptSubmit hook. It reads the request from the payload, ranks it with the same path the command uses, and prints one line naming the skill and the next one. It prints nothing when it has no confident answer, and never fails the prompt | The learning loop was automatic but the routing was not; the router knows more than the harness's own judgement | Simulated payloads -> `Skill router: fix-ci [ci-delivery]. Next: loop-on-ci.` and `Skill router: gws-sheets [data]. Next: aswath-csvjson.`; exit 0 on both |
+| `bin/router.py` | New `router hook install\|uninstall\|status`, which writes the settings entry idempotently and backs the file up first | The hook has to be installable and removable without hand-editing settings.json | `router hook status` -> installed; `settings.json` parses; uninstall and install are repeatable |
+| `~/.claude/settings.json` | The steering hook entry, installed with `router hook install` | The router should steer every request | `settings.json` parses; the entry is found by `router hook status`; the backup sits beside it |
+| `docs/reviews/decision-log.md` | Added D18 | Contract requires every decision to be written down | Read back; the entry names the options, the evidence and the note about LM Studio |
+| `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
+| `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |

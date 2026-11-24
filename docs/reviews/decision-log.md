@@ -496,3 +496,39 @@ decision and the command that proves it.
   `fix-ci` first; `pytest tests` -> 62 passed, the sync test included.
 - Consequence: the numbers this repo measures are now the numbers the agent
   actually routes with.
+
+## D18 — The steering hook: the router's answer on every prompt
+- Date: 2026-11-24
+- Prompt: "ok let me use and try is this automatically enable in my claude coee to use"
+- Context: the learning loop was automatic - every prompt, skill load, edit and
+  delete was being recorded - but the *routing* was not. Claude Code injects
+  the whole catalogue and picks a skill by its own judgement, and the router's
+  answer sat unused unless someone called it. The router knows more than that
+  judgement does: the taxonomy, the ledger, the semantic index, and what was
+  used last time.
+- Options:
+  - Leave it as a command - the router is available but never consulted
+    unless asked, which is most of the value left on the table.
+  - A UserPromptSubmit hook that runs the router and injects its answer -
+    every request arrives with the recommendation attached.
+  - A hook that always injects - predictable, but it puts a line in the
+    context for prompts that need no skill at all.
+- Chosen: `bin/router-steer.py` as a UserPromptSubmit hook, and it says
+  nothing unless it has something: a named capability, a precedent, or a
+  clear lead. One or two lines, never blocking the prompt, never failing the
+  session. `router hook install` writes the settings entry, `router hook
+  uninstall` removes it, and the settings file is backed up first.
+- Also chosen: the command is an absolute path, not `%USERPROFILE%`. The hook
+  runs in whatever shell the harness picks, and only an absolute path is the
+  same in all of them.
+- Evidence: `echo '{"hook_event_name":"UserPromptSubmit","prompt":"find the
+  failing checks on this pr and fix them"}' | python bin/router-steer.py` ->
+  `Skill router: fix-ci [ci-delivery]. Next: loop-on-ci.` The same command
+  with the CSV prompt -> `Skill router: gws-sheets [data]. Next:
+  aswath-csvjson.` `router hook status` -> installed; `settings.json` parses
+  and carries the entry.
+- Consequence: the router now steers, and the request still works if the
+  hook is silent.
+- Note: the user was asked about starting LM Studio at logon and said no, so
+  it was not added. The semantic layer falls back to the keyword path when
+  the provider is not running, and says so.
