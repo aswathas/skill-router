@@ -97,3 +97,12 @@ repo, so the record is written by hand here.
 - Decision it produced: D16 (no name anchor; precedent handles the case).
 - Work it caused: the two measurements, and the revert of
   `skills/aswath-capability/scripts/semantic.py`. Net file change: none.
+
+## 2026-11-24 — the eight skills, and parking on evidence
+- Prompt: "yes", to the two open items: installing third-party plugins, and
+  applying the catalogue parking.
+- Decision it produced: D17 (install the eight from their source repositories,
+  not from the 312,000-file crawler registry) and D18 (park on evidence).
+- Work it caused: eight skills installed in `~/.claude/skills`, one duplicate
+  parked in `~/.claude/skills-off`, the evidence-based keep set in
+  `bin/park-skills.py`, and the records above.

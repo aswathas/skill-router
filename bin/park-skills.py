@@ -87,10 +87,85 @@ EXTRA_KEEP = {
     'superpowers', 'dataviz', 'pdf',
 }
 
+# Skills this machine actually uses. Parking is a judgement about what the
+# owner works with, and the owner is the only one who can make it. These are
+# the ones the daily work touches; the long tail below them is what parking
+# is for.
+DAILY_KEEP = {
+    # voice and the agent-memory family
+    'caveman-compress', 'caveman-explore', 'caveman-review',
+    'poteto-help', 'poteto-mode', 'how', 'why', 'recall',
+    'deja-history', 'deja-search',
+    # the principles family
+    'principle-laziness-protocol', 'principle-minimize-reader-load',
+    'principle-prove-it-works', 'principle-subtract-before-you-add',
+    # tooling the sessions lean on
+    'rtk', 'skill-creator', 'setup-pstack', 'token-budget-advisor',
+    'token-saviour', 'context-budget', 'context-compression',
+    'context-engineering-collection', 'smart-explore', 'explore-codebase',
+    'debug-issue', 'review-changes', 'systematic-debugging', 'brainstorming',
+    'verify-and-stop', 'writing-skills', 'writing-for-agents',
+    'technical-writing',
+    # interface work
+    'design-taste-frontend', 'impeccable', 'baseline-ui', 'frontend-design',
+    'popular-web-designs', 'unslop', 'humanizer', 'grounded-citations',
+    'hallmark',
+    # documents and the work around them
+    'docx', 'pptx', 'xlsx', 'microsoft-office', 'google-workspace',
+    'form-filling', 'find-skills', 'mdview', 'anatomy', 'p5js',
+    # the openspec workflow family: one set, used together
+    'openspec-apply-change', 'openspec-archive-change', 'openspec-explore',
+    'openspec-propose', 'openspec-sync-specs', 'openspec-update-change',
+    # the machines and the channels
+    'whatsapp-mcp', 'instagram-mcp', 'phone-harness-wsl',
+    'windows-host-automation', 'lmstudio-opencode-context', 'leanrea',
+    'graphify', 'meeting-action-items', 'timetable-to-calendar',
+    'product-price-monitor', 'weekly-review-planning', 'agent-cost-report',
+    'web-app-security-audit', 'vercel-cli-with-tokens', 'hermes-agent',
+    'hermes-webui-custom-instance',
+}
+
+# The eight skills fetched from their source repositories, installed by the
+# router's fetch-and-forge loop.
+FETCHED_KEEP = {
+    'deslop', 'fix-ci', 'fix-merge-conflicts', 'handoff-doc',
+    'improve-animations', 'long-command-check', 'long-session-check',
+    'loop-on-ci',
+}
+
+# A skill the owner has used is never parked. The ledger and the observation
+# log are the evidence.
+def evidence_skills(home=None):
+    names = set()
+    state = Path(home) if home else Path.home() / '.minimax' / 'local-runtime' / 'skill-learning'
+    led = state / 'ledger.json'
+    if led.is_file():
+        try:
+            data = json.loads(led.read_text(encoding='utf-8'))
+            for key in (data.get('skills') or {}):
+                names.add(key)
+                names.add(key.split(':')[-1])
+        except (OSError, ValueError):
+            pass
+    obs = state / 'observations.ndjson'
+    if obs.is_file():
+        try:
+            for line in obs.read_text(encoding='utf-8').splitlines():
+                if not line.strip():
+                    continue
+                row = json.loads(line)
+                if row.get('skill'):
+                    names.add(row['skill'])
+                    names.add(str(row['skill']).split(':')[-1])
+        except (OSError, ValueError):
+            pass
+    return names
+
 
 def keep_set(root='minimax'):
-    keep = set(KEEP) | EXTRA_KEEP
+    keep = set(KEEP) | EXTRA_KEEP | DAILY_KEEP | FETCHED_KEEP
     keep |= {s for s in KEEP if s.startswith('aswath-')}
+    keep |= evidence_skills()
     return keep
 
 

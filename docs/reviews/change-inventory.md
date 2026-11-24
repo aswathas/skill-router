@@ -102,3 +102,12 @@ Every file changed in a range appears exactly once here, including these docs.
 | `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
 | `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |
 | `skills/aswath-capability/scripts/semantic.py` | Net change: none. The name anchor was implemented, measured and reverted | The anchor was measured twice: applied to every skill it cost capability top-1 0.805 -> 0.742, and restricted to the skills the taxonomy ignored it cost 0.805 -> 0.711 | The file is byte-identical to the merged version; `evals/run_semantic_eval.py` reports 0.805 / 0.222 / 2096, unchanged |
+
+## 2026-11-24 — eight skills installed, parking applied on evidence
+
+| File | What changed | Why | How tested |
+|---|---|---|---|
+| `bin/park-skills.py` | The keep set is now evidence-based: the ledger and the observation log are read, and a skill the owner has used is never parked. `DAILY_KEEP` and `FETCHED_KEEP` hold the families not yet in evidence | The aggressive list was written for a 1,387-skill catalogue; this machine has 114 and most are in daily use | Dry run listed 6 candidates, one was parked; `router park status --root claude` -> 113 installed, 1 parked |
+| `docs/reviews/decision-log.md` | Added D17 and D18 | Contract requires every decision to be written down | Read back; both entries name the options, the measurements and the consequence |
+| `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
+| `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |

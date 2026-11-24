@@ -409,3 +409,65 @@ decision and the command that proves it.
   with the taxonomy. Where the taxonomy is wrong, the ledger and the
   precedent store correct it over time, and a rejected skill stops being
   offered.
+
+## D17 — Install the eight missing skills from their source repositories, not from the crawler registry
+- Date: 2026-11-24
+- Prompt: "yes" (to installing third-party plugins, which would lift the measurable ceiling)
+- Context: 25 of the 63 strict expectations named skills that were not installed
+  here, so the ceiling was 0.603. The biggest source, `majiayu000/claude-skill-registry`,
+  turned out to hold 312,160 `SKILL.md` files, and the copies under it are
+  *pointers*, not skills: "This pointer keeps old links working. It is not an
+  installable skill."
+- Options:
+  - Install the registry wholesale - 312,000 skills, most of them pointers and
+    duplicates, against a catalogue of 114. It is a crawler index, not a
+    library.
+  - Install the eight that fill a real gap, from the repositories that
+    actually wrote them, and leave the rest.
+  - Install nothing and report the ceiling - the skills are useful to the owner
+    whatever the benchmark says.
+- Chosen: install the eight from their source repositories, each with a real
+  frontmatter and no scripts:
+  | skill | source |
+  |---|---|
+  | `fix-ci` | `Asymmetric-al/core` |
+  | `fix-merge-conflicts` | `Asymmetric-al/core` |
+  | `loop-on-ci` | `Asymmetric-al/core` |
+  | `deslop` | `Asymmetric-al/core` |
+  | `improve-animations` | `Asymmetric-al/core` |
+  | `handoff-doc` | `MiniMax-AI/mcode-stack` |
+  | `long-command-check` | `MiniMax-AI/mcode-stack` |
+  | `long-session-check` | `MiniMax-AI/mcode-stack` |
+- Evidence: capability top-1 0.805 -> **0.815**, strict top-1 0.206 -> **0.270**
+  (0.286 with the semantic layer), mean cost 2435 -> 2052. The exact benchmark
+  request "find the failing checks on this pr and fix them" now answers
+  `fix-ci`, and the semantic layer rescued the `ci-delivery` capability to do it.
+- Consequence: the strict ceiling here is now 46/63 = 0.730. The remaining 17
+  missing skills are pointer-only in the crawler registry, and the local plugin
+  catalogue cache is empty, so they are not obtainable from here.
+
+## D18 — Park on evidence, not on a list
+- Date: 2026-11-24
+- Prompt: "yes" (to applying the catalogue parking)
+- Context: the aggressive keep set from the repo was written for a machine
+  with 1,387 visible skills. This machine has 114, of which most are in daily
+  use. Parking 68 would have broken the owner's own workflow for a token
+  saving the harness does not even charge in full.
+- Options:
+  - Apply the aggressive list anyway - it is the documented rule, and it is
+    wrong here.
+  - Keep nothing and park nothing - the token cost stays.
+  - Keep by evidence: the skills the owner has used (the ledger and the
+    observation log), the harness-critical families, our own `aswath-*` set,
+    and the eight freshly fetched ones. Park the rest.
+- Chosen: the evidence-based keep set. `bin/park-skills.py` now reads the
+  ledger and the observation log and never parks a skill the owner has used;
+  `DAILY_KEEP` and `FETCHED_KEEP` hold the families that are not in evidence
+  yet.
+- Evidence: the dry run listed 6 candidates - five `openspec-*` skills and one
+  duplicate. The openspec set was added to the keep list because it is one
+  workflow used together, and the duplicate `minimax-compaction-handoff`
+  (ours is `aswath-minimax-compaction-handoff`) was parked. One directory
+  moved, from 114 to 113.
+- Consequence: the catalogue stays usable, the duplicate is gone, and the rule
+  is now evidence-based, so it gets sharper as the ledger grows.

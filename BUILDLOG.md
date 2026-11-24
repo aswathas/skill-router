@@ -180,3 +180,28 @@ git history; each entry below names the branch, the change and how it was verifi
 - Where: `aswathas/skill-router`, branch `feat/one-ranking-path`.
 - Records: `docs/reviews/decision-log.md` (D15), `docs/reviews/change-inventory.md`,
   `docs/reviews/prompts.md`.
+
+## 2026-11-24 — eight skills installed, parking on evidence
+
+- What:
+  - Eight skills installed in `~/.claude/skills` from the repositories that
+    actually wrote them: `fix-ci`, `fix-merge-conflicts`, `loop-on-ci`,
+    `deslop` and `improve-animations` from `Asymmetric-al/core`, and
+    `handoff-doc`, `long-command-check` and `long-session-check` from
+    `MiniMax-AI/mcode-stack`. Each has a real frontmatter and no scripts.
+  - The biggest source, `majiayu000/claude-skill-registry`, was not used: it
+    holds 312,160 `SKILL.md` files and its copies are pointers, not skills.
+  - `bin/park-skills.py` now parks on evidence. A skill the owner has used -
+    in the ledger or the observation log - is never parked.
+- Why: 25 of the 63 strict expectations named skills that were not installed
+  here, so the ceiling was 0.603. And the aggressive keep list was written for
+  a 1,387-skill catalogue; this machine has 114, most of them in daily use.
+- Measured: capability top-1 0.805 -> **0.815**, strict top-1 0.206 -> **0.270**
+  (0.286 with the semantic layer), mean cost 2435 -> **2052**. The benchmark
+  request "find the failing checks on this pr and fix them" now answers
+  `fix-ci`. The strict ceiling here is 46/63 = 0.730.
+- Parking: one directory moved - `minimax-compaction-handoff`, a duplicate of
+  `aswath-minimax-compaction-handoff`. 114 -> 113.
+- Where: `aswathas/skill-router`, branch `main`.
+- Records: `docs/reviews/decision-log.md` (D17-D18), `docs/reviews/change-inventory.md`,
+  `docs/reviews/prompts.md`.
