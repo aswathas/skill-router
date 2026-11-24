@@ -471,3 +471,28 @@ decision and the command that proves it.
   moved, from 114 to 113.
 - Consequence: the catalogue stays usable, the duplicate is gone, and the rule
   is now evidence-based, so it gets sharper as the ledger grows.
+
+## D17 — The published skill's resolver now uses this repo's ranking
+- Date: 2026-11-24
+- Prompt: "do we need to do more or how to use the router"
+- Context: the router CLI and the published `aswath-capability` skill ranked
+  the same request differently, because the skill's `query-registry.py` carried
+  its own scorer. Everything this repo measured — the semantic layer, the
+  precedent, the ledger weight — only applied to the command. The agent's own
+  routing was the one place it did not reach.
+- Options:
+  - Leave the skill alone - the command is the tool, the skill is legacy.
+  - Make the skill's resolver call this repo's modules - one ranking path for
+    both the command and the agent.
+  - Port the measurements into the skill - two implementations to keep in
+    step forever.
+- Chosen: the skill's resolver imports `semantic.py` and `precedent.py` from
+  its own directory and uses them when they are present, falling back to its
+  local scorer when the embedding index is not there. The change was made in
+  the published repo and mirrored here, so the two copies stay identical and
+  the sync test holds.
+- Evidence: `query-registry.py need "find the failing checks on this pr and
+  fix them"` prints `semantic layer: on (rescued ci-delivery)` and answers
+  `fix-ci` first; `pytest tests` -> 62 passed, the sync test included.
+- Consequence: the numbers this repo measures are now the numbers the agent
+  actually routes with.

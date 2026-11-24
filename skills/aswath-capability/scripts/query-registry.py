@@ -229,14 +229,76 @@ def cmd_cap(reg, args):
     return 0
 
 
+def rank_with_router(reg, cap_map, text):
+    """The same ranking the `router` command uses.
+
+    This skill shipped its own scorer, and it drifted from the one the CLI
+    uses - so the agent's routing missed the semantic layer and the
+    precedent, and the two answers disagreed. One ranking path now: the
+    semantic layer when its index is there, the local scorer when it is not.
+    """
+    here = Path(__file__).resolve().parent
+    try:
+        import importlib.util
+
+        def _load(name):
+            spec = importlib.util.spec_from_file_location(name, here / (name + ".py"))
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules[name] = mod
+            spec.loader.exec_module(mod)
+            return mod
+
+        semantic = _load("semantic")
+        if semantic.enabled():
+            ranked, info = semantic.rank(reg, cap_map, text)
+            hit = None
+            try:
+                precedent = _load("precedent")
+                hit = precedent.lookup(text)
+            except Exception:
+                hit = None
+            if hit:
+                bonus = 8
+                for c in ranked:
+                    if c.get("name") == hit["skill"]:
+                        c["_match"] = c.get("_match", 0) + bonus
+                        break
+                else:
+                    for group in ("local", "plugin", "marketplace"):
+                        for s in reg.get(group) or []:
+                            if s.get("name") == hit["skill"]:
+                                item = dict(s)
+                                item["_match"] = bonus
+                                item["_caps"] = []
+                                item["_cap_overlap"] = 0
+                                ranked.insert(0, item)
+                                break
+                        else:
+                            continue
+                        break
+                ranked.sort(key=lambda c: -c.get("_match", 0))
+            info = dict(info)
+            info["precedent"] = hit
+            return ranked, info
+    except Exception:
+        pass
+    return match_text(reg, text, cap_map), {"semantic": False,
+                                            "reason": "router layer unavailable"}
+
+
 def cmd_need(reg, args):
     cap_map = load_capability_map(reg)
-    hits = match_text(reg, args.text, cap_map)
+    hits, info = rank_with_router(reg, cap_map, args.text)
     if not hits:
         print("no match")
         return 1
     print(f"== need: {args.text} ({len(hits)} candidates) ==")
     print(f"   inferred capabilities: {', '.join(infer_capabilities(args.text, cap_map)) or 'none'}")
+    if info.get("semantic"):
+        print(f"   semantic layer: on (rescued {info.get('rescued') or 'no'})")
+    if (info.get("precedent") or {}).get("skill"):
+        print(f"   precedent: {info['precedent']['skill']} "
+              f"(used before, match {info['precedent']['score']:.2f})")
     for s in hits[:args.limit]:
         print(fmt(s, args.verbose))
     return 0

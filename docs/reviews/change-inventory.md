@@ -111,3 +111,12 @@ Every file changed in a range appears exactly once here, including these docs.
 | `docs/reviews/decision-log.md` | Added D17 and D18 | Contract requires every decision to be written down | Read back; both entries name the options, the measurements and the consequence |
 | `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
 | `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |
+
+## 2026-11-24 — the published skill resolves with this repo's ranking
+
+| File | What changed | Why | How tested |
+|---|---|---|---|
+| `skills/aswath-capability/scripts/query-registry.py` | `rank_with_router()` imports `semantic.py` and `precedent.py` from the same directory and uses them when they are present; the local scorer stays as the fallback | The skill's resolver had its own scorer, so the agent's routing missed the semantic layer and the precedent and disagreed with the `router` command | `query-registry.py need "find the failing checks on this pr and fix them"` -> `semantic layer: on (rescued ci-delivery)`, `fix-ci` first; `pytest tests` -> 62 passed |
+| `docs/reviews/decision-log.md` | Added D17 | Contract requires every decision to be written down | Read back; the entry names the drift, the options and the evidence |
+| `docs/reviews/change-inventory.md` | Added the table above | Contract requires one row per changed file | Every file in `git status -s` appears exactly once above |
+| `docs/reviews/prompts.md` | Added the 2026-11-24 prompt entry | Contract requires the prompt trail to be recorded | Cross-checked against the session transcript |

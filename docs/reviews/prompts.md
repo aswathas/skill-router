@@ -106,3 +106,10 @@ repo, so the record is written by hand here.
 - Work it caused: eight skills installed in `~/.claude/skills`, one duplicate
   parked in `~/.claude/skills-off`, the evidence-based keep set in
   `bin/park-skills.py`, and the records above.
+
+## 2026-11-24 — the skill resolves with the same ranking
+- Prompt: "do we need to do more or how to use the router"
+- Decision it produced: D17 (the published skill's resolver uses this repo's
+  modules) and D4 in the aswath-skills repo.
+- Work it caused: `rank_with_router()` in `query-registry.py`, mirrored into
+  both copies, and the records above.
